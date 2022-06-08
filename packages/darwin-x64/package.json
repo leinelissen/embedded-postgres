@@ -19,5 +19,8 @@
   ],
   "devDependencies": {
     "@embedded-postgres/downloader": "^14.3.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
