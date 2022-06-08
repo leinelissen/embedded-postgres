@@ -1,13 +1,13 @@
-import { spawn, spawnSync } from 'child_process';
+import { ChildProcess, spawn } from 'child_process';
 import path from 'path';
 import fs from 'fs/promises';
-import { rmSync, writeSync } from 'fs';
 import { tmpdir } from 'os';
 import crypto from 'crypto';
 import { Client } from 'pg';
 import getBinaries from './binary';
+import AsyncExitHook from 'async-exit-hook';
 
-const { pg_ctl, initdb } = getBinaries();
+const { postgres, initdb } = getBinaries();
 
 /**
  * The options that are optionally specified for launching the Postgres database.
@@ -54,7 +54,7 @@ const instances = new Set<EmbeddedPostgres>();
 export default class EmbeddedPostgres {
     protected options: PostgresOptions;
 
-    public isRunning = false;
+    private process?: ChildProcess;
 
     constructor(options: Partial<PostgresOptions> = {}) {
         // Assign default options to options object
@@ -104,25 +104,31 @@ export default class EmbeddedPostgres {
      */
     async start() {
         await new Promise<void>((resolve, reject) => {
-            const process = spawn(pg_ctl, [
-                `--pgdata=${this.options.database_dir}`,
-                `--log=${path.join(this.options.database_dir, 'pg.log')}`,
-                '-o',
-                `-F -p ${this.options.port}`,
-                'start',
-            ], { stdio: 'inherit' });
+            // Spawn a postgres server
+            this.process = spawn(postgres, [
+                '-D',
+                this.options.database_dir,
+                '-p',
+                this.options.port.toString(),
+            ]);
 
-            process.on('exit', (code) => {
-                if (code === 0) {
+            // Connect to stderr, as that is where the messages get sent
+            this.process.stderr?.on('data', (chunk: Buffer) => {
+                // Parse the data as a string and log it
+                const message = chunk.toString('utf-8');
+                console.log(message); 
+
+                // GUARD: Check for the right message to determine server start
+                if (message.includes('database system is ready to accept connections')) {
                     resolve();
-                } else {
-                    reject(`Postgres start script exited with code ${code}. Please check that the port is free, and your server isn't already running.`);
                 }
             });
-        });
 
-        // Set the right flag for the cluster
-        this.isRunning = true;
+            // In case the process exits early, the promise is rejected.
+            this.process.on('close', () => {
+                reject();
+            });
+        });
     }
 
     /**
@@ -133,61 +139,21 @@ export default class EmbeddedPostgres {
      */
     async stop() {
         // GUARD: If no database is running, immdiately return the function.
-        if (!this.isRunning) {
+        if (!this.process) {
             return;
         }
 
-        // Trigger pg_ctl with the stop script
-        await new Promise<void>((resolve, reject) => {
-            const process = spawn(pg_ctl, [
-                '-D',
-                this.options.database_dir,
-                'stop',
-            ], { stdio: 'inherit' });
 
-            process.on('exit', (code) => {
-                if (code === 0) {
-                    resolve();
-                } else {
-                    reject(`Postgres stop script exited with code ${code}. Please check the logs for extra info.`);
-                }
-            });
+        // Kill the existing postgres process
+        await new Promise<void>((resolve) => {
+            this.process?.on('exit', resolve);
+            this.process?.kill('SIGINT');
         });
-
-        // Set the right flag for the cluster now that it is not running anymore
-        this.isRunning = false;
 
         // GUARD: Additional work if database isn't persistent
         if (this.options.persistent === false) {
             // Delete the data directory
             await fs.rm(this.options.database_dir, { recursive: true, force: true });
-        }
-    }
-
-    /**
-     * A synchronous alternative to stop. This is needed because some exit
-     * handler for NodeJS won't wait for asynchronous code to complete.
-     * NOTE: Please use `stop` instead.
-     */
-    protected stopSync() {
-        // GUARD: If no database is running, immdiately return the function.
-        if (!this.isRunning) {
-            return;
-        }
-
-        // Trigger pg_ctl with the stop script
-        spawnSync(pg_ctl, [
-            '-D',
-            this.options.database_dir,
-            'stop',
-        ], { stdio: 'inherit' });
-
-        // Set the right flag for the cluster now that it is not running anymore
-        this.isRunning = false;
-
-        // GUARD: Additional work if database isn't persistent
-        if (this.options.persistent === false) {
-            rmSync(this.options.database_dir, { recursive: true, force: true });
         }
     }
 
@@ -199,13 +165,20 @@ export default class EmbeddedPostgres {
      * @returns Client
      */
     getPgClient(database = 'postgres', host = 'localhost') {
-        return new Client({
+        // Create client
+        const client = new Client({
             user: this.options.user,
             password: this.options.password,
             port: this.options.port,
             host,
             database,
         });
+
+        // Log errors rather than throwing them so that embedded-postgres has
+        // enough time to actually shutdown.
+        client.on('error', console.error);
+
+        return client;
     }
 
     /**
@@ -213,7 +186,7 @@ export default class EmbeddedPostgres {
      */
     async createDatabase(name: string) {
         // GUARD: Clluster must be running for performing database operations
-        if (!this.isRunning) {
+        if (!this.process) {
             throw new Error('Your cluster must be running before you can create a database');
         }
         
@@ -231,7 +204,7 @@ export default class EmbeddedPostgres {
      */
     async dropDatabase(name: string) {
         // GUARD: Clluster must be running for performing database operations
-        if (!this.isRunning) {
+        if (!this.process) {
             throw new Error('Your cluster must be running before you can create a database');
         }
 
@@ -250,33 +223,15 @@ export default class EmbeddedPostgres {
  * nicely shutdown all potentially started clusters, and we don't end up with
  * zombie processes.
  */
-function gracefulShutdown() {
+async function gracefulShutdown(done: () => void) {
     // Loop through all instances, stop them, and await the response
-    for (const instance of instances.values()) {
-        instance.stop();
-    }
+    await Promise.all([...instances].map((instance) => {
+        return instance.stop();
+    }));
 
-    // Actually exit the script
-    process.exit(0);
+    // Let NodeJS know we're done
+    done();
 }
 
-// Assign the shutdown function to various shutdown modes
-process.once('SIGINT', gracefulShutdown);
-process.once('SIGTERM', gracefulShutdown);
-process.once('beforeExit', gracefulShutdown);
-process.once('uncaughtException', (err, origin) => {
-    // Stop all existing instances
-    for (const instance of instances.values()) {
-        instance.stop();
-    }
-
-    // Write exception to stderr
-    writeSync(
-        process.stderr.fd,
-        `Caught exception: ${err}\n` +
-        `Exception origin: ${origin}`
-    ); 
-    
-    // Exit with non-zero exit code
-    process.exit(1);
-});
+// Register graceful shutdown function
+AsyncExitHook(gracefulShutdown);
