@@ -24,8 +24,8 @@
     "access": "public"
   },
   "files": [
-    "./dist",
-    "./native"
+    "./dist/**/*",
+    "./native/**/*"
   ],
   "gitHead": "5b3e39624b6a9a1e3d53404684ee1239efa19020"
 }
