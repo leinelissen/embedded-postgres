@@ -1,0 +1,27 @@
+{
+    "extends": "@tsconfig/node12/tsconfig.json",
+    "compilerOptions": {
+        "incremental": true,
+        "outDir": "./dist",
+        "baseUrl": ".",
+        "moduleResolution": "Node",
+        "module": "CommonJS",
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "paths": {
+            "@embedded-postgres/*": [
+                "packages/*/src/index.ts",
+            ],
+            "embedded-postgres": [
+                "packages/embedded-postgres/src/index.ts",
+            ]
+        }
+
+    },
+    "references": [
+        {
+            "path": "packages/embedded-postgres"
+        }
+    ],
+    "exclude": ["node_modules", "dist", "**/*.spec.ts"]
+}

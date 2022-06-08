@@ -1,0 +1,23 @@
+{
+  "name": "@embedded-postgres/darwin-arm64",
+  "version": "14.3.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "tsc -w",
+    "build": "tsc",
+    "lint": "eslint ./src --ext ts",
+    "download": "node scripts/download.js"
+  },
+  "author": "Lei Nelissen",
+  "license": "MIT",
+  "os": [
+    "darwin"
+  ],
+  "cpu": [
+    "arm64"
+  ],
+  "devDependencies": {
+    "@embedded-postgres/downloader": "^14.3.0"
+  }
+}
