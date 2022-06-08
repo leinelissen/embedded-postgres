@@ -1,6 +1,6 @@
 {
   "name": "@embedded-postgres/darwin-arm64",
-  "version": "14.3.0",
+  "version": "14.3.0-alpha.2",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
