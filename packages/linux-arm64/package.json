@@ -1,6 +1,6 @@
 {
   "name": "@embedded-postgres/linux-arm64",
-  "version": "14.3.0-alpha.8",
+  "version": "14.3.0-alpha.9",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -19,8 +19,8 @@
     "arm64"
   ],
   "devDependencies": {
-    "@embedded-postgres/downloader": "^14.3.0-alpha.8",
-    "@embedded-postgres/symlink-reader": "^14.3.0-alpha.8"
+    "@embedded-postgres/downloader": "^14.3.0-alpha.9",
+    "@embedded-postgres/symlink-reader": "^14.3.0-alpha.9"
   },
   "publishConfig": {
     "access": "public"
