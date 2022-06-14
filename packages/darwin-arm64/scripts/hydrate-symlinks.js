@@ -16,7 +16,7 @@ async function hydrateSymlinks() {
     // Re-hydrate all of them
     await Promise.all(
         symlinks.map(({ source, target }) => {
-            return fs.link(source, target);
+            return fs.symlink(source, target);
         })
     // Swallow any errors, since the symlinks may already exist
     ).catch(() => {});
