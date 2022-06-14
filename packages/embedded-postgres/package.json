@@ -17,6 +17,7 @@
   "author": "Lei Nelissen",
   "license": "MIT",
   "devDependencies": {
+    "@embedded-postgres/symlink-reader": "^14.3.0-alpha.8",
     "@types/async-exit-hook": "^2.0.0",
     "@types/pg": "^8.6.5",
     "eslint": "^8.17.0",

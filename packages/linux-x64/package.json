@@ -7,7 +7,8 @@
     "start": "tsc -w",
     "build": "tsc",
     "lint": "eslint ./src --ext ts",
-    "download": "node scripts/download.js"
+    "download": "node scripts/download.js",
+    "postinstall": "node scripts/hydrate-symlinks.js"
   },
   "author": "Lei Nelissen",
   "license": "MIT",
@@ -18,7 +19,8 @@
     "ia32"
   ],
   "devDependencies": {
-    "@embedded-postgres/downloader": "^14.3.0"
+    "@embedded-postgres/downloader": "^14.3.0-alpha.8",
+    "@embedded-postgres/symlink-reader": "^14.3.0-alpha.8"
   },
   "publishConfig": {
     "access": "public"
