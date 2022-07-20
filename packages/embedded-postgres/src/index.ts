@@ -75,6 +75,9 @@ export default class EmbeddedPostgres {
         const passwordFile = path.resolve(tmpdir(), `pg-password-${randomId}`);
         await fs.writeFile(passwordFile, this.options.password + '\n');
 
+        // Greedily make the file executable, in case it isn't
+        await fs.chmod(initdb, '744');
+
         // Initialize the database
         await new Promise<void>((resolve, reject) => {
             const process = spawn(initdb, [
@@ -103,7 +106,11 @@ export default class EmbeddedPostgres {
      * shut down when the script exits.
      */
     async start() {
+        // Greedily make the file executable, in case it isn't
+        await fs.chmod(postgres, '744');
+
         await new Promise<void>((resolve, reject) => {
+
             // Spawn a postgres server
             this.process = spawn(postgres, [
                 '-D',
@@ -142,7 +149,6 @@ export default class EmbeddedPostgres {
         if (!this.process) {
             return;
         }
-
 
         // Kill the existing postgres process
         await new Promise<void>((resolve) => {
