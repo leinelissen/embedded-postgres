@@ -76,6 +76,7 @@ export default class EmbeddedPostgres {
         await fs.writeFile(passwordFile, this.options.password + '\n');
 
         // Greedily make the file executable, in case it is not
+        await fs.chmod(postgres, '755');
         await fs.chmod(initdb, '755');
 
         // Initialize the database
