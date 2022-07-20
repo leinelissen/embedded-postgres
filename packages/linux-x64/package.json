@@ -1,6 +1,6 @@
 {
   "name": "@embedded-postgres/linux-ia32",
-  "version": "14.3.0-alpha.16",
+  "version": "14.3.0-alpha.17",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -19,8 +19,8 @@
     "ia32"
   ],
   "devDependencies": {
-    "@embedded-postgres/downloader": "^14.3.0-alpha.16",
-    "@embedded-postgres/symlink-reader": "^14.3.0-alpha.16"
+    "@embedded-postgres/downloader": "^14.3.0-alpha.17",
+    "@embedded-postgres/symlink-reader": "^14.3.0-alpha.17"
   },
   "publishConfig": {
     "access": "public"
