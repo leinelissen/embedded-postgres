@@ -75,7 +75,7 @@ export default class EmbeddedPostgres {
         const passwordFile = path.resolve(tmpdir(), `pg-password-${randomId}`);
         await fs.writeFile(passwordFile, this.options.password + '\n');
 
-        // Greedily make the file executable, in case it isn't
+        // Greedily make the file executable, in case it is not
         await fs.chmod(initdb, '755');
 
         // Initialize the database
@@ -106,7 +106,7 @@ export default class EmbeddedPostgres {
      * shut down when the script exits.
      */
     async start() {
-        // Greedily make the file executable, in case it isn't
+        // Greedily make the file executable, in case it is not
         await fs.chmod(postgres, '755');
 
         await new Promise<void>((resolve, reject) => {
@@ -156,7 +156,7 @@ export default class EmbeddedPostgres {
             this.process?.kill('SIGINT');
         });
 
-        // GUARD: Additional work if database isn't persistent
+        // GUARD: Additional work if database is not persistent
         if (this.options.persistent === false) {
             // Delete the data directory
             await fs.rm(this.options.database_dir, { recursive: true, force: true });
