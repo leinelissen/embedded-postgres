@@ -2,7 +2,7 @@
 A Node package that allows you to spawn a Postgresql cluster programatically.
 
 ## Usage
-```
+```sh
 npm i embedded-postgres
 ```
 
