@@ -13,7 +13,7 @@
   "author": "Lei Nelissen",
   "license": "MIT",
   "os": [
-    "windows"
+    "win32"
   ],
   "cpu": [
     "x64"
