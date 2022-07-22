@@ -1,6 +1,6 @@
 {
   "name": "@embedded-postgres/linux-x64",
-  "version": "14.3.0-alpha.19",
+  "version": "14.3.0-alpha.20",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -19,8 +19,8 @@
     "x64"
   ],
   "devDependencies": {
-    "@embedded-postgres/downloader": "^14.3.0-alpha.19",
-    "@embedded-postgres/symlink-reader": "^14.3.0-alpha.19"
+    "@embedded-postgres/downloader": "^14.3.0-alpha.20",
+    "@embedded-postgres/symlink-reader": "^14.3.0-alpha.20"
   },
   "publishConfig": {
     "access": "public"
