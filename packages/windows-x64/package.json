@@ -1,6 +1,6 @@
 {
   "name": "@embedded-postgres/windows-x64",
-  "version": "14.3.0-alpha.21",
+  "version": "10.20.0-beta.1",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -19,8 +19,8 @@
     "x64"
   ],
   "devDependencies": {
-    "@embedded-postgres/downloader": "^14.3.0-alpha.21",
-    "@embedded-postgres/symlink-reader": "^14.3.0-alpha.21"
+    "@embedded-postgres/downloader": "^10.20.0-beta.1",
+    "@embedded-postgres/symlink-reader": "^10.20.0-beta.1"
   },
   "publishConfig": {
     "access": "public"
