@@ -28,6 +28,23 @@ function mapArchitecture(arch: string): AcceptedArchs {
 }
 
 /**
+ * Map the output from os.platform to a platform that is supported by the
+ * Postgresql binaries.
+ */
+function mapPlatform(platform: string): AcceptedPlatforms {
+    switch (platform) {
+        case 'win32':
+            return 'windows';
+        case 'darwin':
+            return 'darwin';
+        case 'linux':
+            return 'linux';
+        default:
+            throw new Error('Unsupported platform ' + platform);
+    }
+}
+
+/**
  * Download the Postgresql binaries for a combination of version, architecture
  * and platform.
  * 
@@ -35,10 +52,11 @@ function mapArchitecture(arch: string): AcceptedArchs {
  * @param arch The platform architecture for which the binary should be downloaded
  * @param platform The platform for which the binary should be downloaded
  */
-export async function downloadBinaries(version: string, arch: string, platform: AcceptedPlatforms) {
+export async function downloadBinaries(version: string, arch: string, platform: string) {
     // Form URL from parameters
     const mappedArch = mapArchitecture(arch);
-    const url = `https://repo1.maven.org/maven2/io/zonky/test/postgres/embedded-postgres-binaries-${platform}-${mappedArch}/${version}/embedded-postgres-binaries-${platform}-${mappedArch}-${version}.jar`;
+    const mappedPlatform = mapPlatform(platform);
+    const url = `https://repo1.maven.org/maven2/io/zonky/test/postgres/embedded-postgres-binaries-${mappedPlatform}-${mappedArch}/${version}/embedded-postgres-binaries-${mappedPlatform}-${mappedArch}-${version}.jar`;
 
     // Download file
     const jar = await fetch(url).then((f) => {
