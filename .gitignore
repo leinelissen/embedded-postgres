@@ -131,5 +131,6 @@ dist
 
 # Ignore natively downloaded files
 native
+native.txz
 
 .DS_Store
