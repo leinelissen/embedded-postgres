@@ -1,6 +1,6 @@
 {
   "name": "@embedded-postgres/downloader",
-  "version": "13.6.0-beta.6",
+  "version": "14.3.0-beta.6",
   "description": "A helper to download Postgresql binaries",
   "main": "./dist/index.js",
   "private": true,
