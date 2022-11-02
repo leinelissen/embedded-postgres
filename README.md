@@ -1,11 +1,11 @@
-![Embedded Postgres](./docs/embedded-postgres-header.png)
+![Embedded Postgres](./docs/images/embedded-postgres-header.png)
 
 <div align="center">
 
-    ![npm](https://img.shields.io/npm/v/embedded-postgres)
-    ![npm type definitions](https://img.shields.io/npm/types/embedded-postgres)
-    ![npm](https://img.shields.io/npm/dm/embedded-postgres)
-    ![NPM](https://img.shields.io/npm/l/embedded-postgres)
+![npm](https://img.shields.io/npm/v/embedded-postgres)
+![npm type definitions](https://img.shields.io/npm/types/embedded-postgres)
+![npm](https://img.shields.io/npm/dm/embedded-postgres)
+![NPM](https://img.shields.io/npm/l/embedded-postgres)
 
 </div>
 
@@ -19,6 +19,8 @@
 ```sh
 npm i embedded-postgres
 ```
+
+<br />
 
 ## Usage
 This package contains a simple API that allows you to create clusters, start
@@ -59,6 +61,8 @@ async function main() {
 main();
 ```
 
+<br />
+
 ## PostgresQL Versions
 This package aims to track the [PostgresQL support
 policy](https://www.postgresql.org/support/versioning/) for supported versions.
@@ -88,9 +92,13 @@ Installing particular versions of PostgresQL (i.e. versions not released on NPM)
 is currently not possible. If you would have a need for doing so, please create
 an issue.
 
+<br />
+
 ## Contributing
 This package is open to issues, feedback, ideas and pull requests. Create an
 issue on this repository to get started!
+
+<br />
 
 ## Credits and Licensing
 Embedded Postgres was created by Lei Nelissen for [BMD
@@ -102,3 +110,5 @@ code in this package is made available under the MIT license.
 <a href="https://bmd.studio">
     <img src="./docs/images/logo-bmd.svg" alt="BMD Studio" width="150" height="150" />
 </a>
+
+<br />
