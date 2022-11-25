@@ -7,14 +7,12 @@ const lernaPublish = require('@lerna/publish');
  * binaries for thesse versions will be released.
  */
 const supportedVersions = [
-    '10.20.0',
-    '11.15.0',
-    '12.10.0',
-    '13.6.0',
-    '14.3.0',
-    '14.4.0',
-    '14.5.0',
-    '15.0.0',
+    '10.23.0',
+    '11.18.0',
+    '12.13.0',
+    '13.9.0',
+    '14.6.0',
+    '15.1.0',
 ];
 
 /**
@@ -31,6 +29,7 @@ async function main() {
     for await (let pgVersion of supportedVersions) {
         // Create version number from pgVersion and affix
         const version = `${pgVersion}${affix}`;
+        const [major, minor, patch] = pgVersion.split('.');
 
         // Log start
         console.log(`🔄 Processing v${version}...`);
@@ -40,6 +39,7 @@ async function main() {
             cwd: process.cwd(),
             script: 'download',
             '--': [pgVersion],
+            ignore: major < 14 ? '@embedded-postgres/darwin-arm64' : '',
         });
 
         // Release the newly downloaded releases
