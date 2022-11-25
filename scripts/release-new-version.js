@@ -34,12 +34,15 @@ async function main() {
         // Log start
         console.log(`🔄 Processing v${version}...`);
 
+        // Determine which packages should be ignored
+        const ignore = major < 14 ? '@embedded-postgres/darwin-arm64' : '';
+
         // Download the new versions in all repositories
         await lernaRun({
             cwd: process.cwd(),
             script: 'download',
             '--': [pgVersion],
-            ignore: major < 14 ? '@embedded-postgres/darwin-arm64' : '',
+            ignore,
         });
 
         // Release the newly downloaded releases
@@ -48,6 +51,7 @@ async function main() {
             bump: version,
             yes: true,
             forcePublish: true,
+            ignore,
         });
 
         // Publish the packages
@@ -55,6 +59,7 @@ async function main() {
             cwd: process.cwd(),
             bump: 'from-package',
             yes: true,
+            ignore,
         });
         
         // Log success
