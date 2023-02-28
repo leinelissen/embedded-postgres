@@ -1,6 +1,6 @@
 {
   "name": "@embedded-postgres/darwin-arm64",
-  "version": "14.7.0-beta.6",
+  "version": "15.2.0-beta.6",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -19,8 +19,8 @@
     "arm64"
   ],
   "devDependencies": {
-    "@embedded-postgres/downloader": "^14.7.0-beta.6",
-    "@embedded-postgres/symlink-reader": "^14.7.0-beta.6"
+    "@embedded-postgres/downloader": "^15.2.0-beta.6",
+    "@embedded-postgres/symlink-reader": "^15.2.0-beta.6"
   },
   "publishConfig": {
     "access": "public"
