@@ -7,12 +7,11 @@ const lernaPublish = require('@lerna/publish');
  * binaries for thesse versions will be released.
  */
 const supportedVersions = [
-    '10.23.0',
-    '11.18.0',
-    '12.13.0',
-    '13.9.0',
-    '14.6.0',
-    '15.1.0',
+    '11.19.0',
+    '12.14.0',
+    '13.10.0',
+    '14.7.0',
+    '15.2.0',
 ];
 
 /**
