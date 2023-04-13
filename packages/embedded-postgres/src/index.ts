@@ -51,7 +51,7 @@ const instances = new Set<EmbeddedPostgres>();
  * managed. Note that many clusters may be created, but they will need seperate
  * data directories in order to be properly lifecycle managed.
  */
-export default class EmbeddedPostgres {
+class EmbeddedPostgres {
     protected options: PostgresOptions;
 
     private process?: ChildProcess;
@@ -242,3 +242,5 @@ async function gracefulShutdown(done: () => void) {
 
 // Register graceful shutdown function
 AsyncExitHook(gracefulShutdown);
+
+export = EmbeddedPostgres;
