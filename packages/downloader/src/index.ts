@@ -79,6 +79,7 @@ export async function downloadBinaries(version: string, arch: string, platform: 
 
     // Store the file on disk so that we can pass it to tar
     const data = archive.getData();
+    await fs.rm('native', { recursive: true }).catch(() => '');
     await fs.mkdir('native').catch(() => '');
     await fs.writeFile('native.txz', data);
 
