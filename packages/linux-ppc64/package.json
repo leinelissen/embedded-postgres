@@ -1,6 +1,6 @@
 {
   "name": "@embedded-postgres/linux-ppc64",
-  "version": "11.20.0-beta.7",
+  "version": "12.15.0-beta.7",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -19,8 +19,8 @@
     "ppc64"
   ],
   "devDependencies": {
-    "@embedded-postgres/downloader": "^11.20.0-beta.7",
-    "@embedded-postgres/symlink-reader": "^11.20.0-beta.7"
+    "@embedded-postgres/downloader": "^12.15.0-beta.7",
+    "@embedded-postgres/symlink-reader": "^12.15.0-beta.7"
   },
   "publishConfig": {
     "access": "public"
