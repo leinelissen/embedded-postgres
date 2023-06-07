@@ -40,7 +40,7 @@ async function main() {
     });
 
     // Create the cluster config files
-    await pg.inititialize();
+    await pg.initialise();
 
     // Start the server
     await pg.start();
