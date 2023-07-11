@@ -1,11 +1,13 @@
-import { ChildProcess, spawn } from 'child_process';
 import path from 'path';
-import fs from 'fs/promises';
-import { tmpdir } from 'os';
 import crypto from 'crypto';
+import fs from 'fs/promises';
+import { tmpdir, userInfo } from 'os';
+import { ChildProcess, spawn, exec } from 'child_process';
+
 import { Client } from 'pg';
-import getBinaries from './binary';
 import AsyncExitHook from 'async-exit-hook';
+
+import getBinaries from './binary';
 
 const { postgres, initdb } = getBinaries();
 
@@ -38,6 +40,15 @@ interface PostgresOptions {
      * https://www.postgresql.org/docs/current/app-postgres.html. Flags should
      * be passed as a string array, e.g. `["--debug"]` or `["--locale=en-GB"]`  */
     postgresFlags: string[];
+    /**
+     * Postgres does not allow binaries to be run by root. In case you're
+     * running in root-only enviroments, such as Docker containers, you may need
+     * to create an extra user on your system in order to be able to call the binaries.
+     * 
+     * NOTE: This WILL irreversibly modify your host system. The effects are
+     * somewhat minor, but it's still recommend to only use this in Docker containers.
+     */
+    createPostgresUser: boolean;
 }
 
 /**
@@ -59,6 +70,7 @@ const defaults: PostgresOptions = {
     persistent: true,
     initdbFlags: [],
     postgresFlags: [],
+    createPostgresUser: false,
 };
 
 /**
@@ -77,6 +89,8 @@ class EmbeddedPostgres {
 
     private process?: ChildProcess;
 
+    private isRootUser: boolean;
+
     constructor(options: Partial<PostgresOptions> = {}) {
         // Options were previously specified in snake_case rather than
         // camelCase. We still want to accept the old style of options.
@@ -92,6 +106,8 @@ class EmbeddedPostgres {
         this.options = Object.assign({}, defaults, legacyOptions, options);
 
         instances.add(this);
+
+        this.isRootUser = userInfo().uid === 0;
     }
 
     /**
@@ -101,6 +117,43 @@ class EmbeddedPostgres {
      * to call this function again.
      */
     async initialise() {
+        // GUARD: Check that a postgres user is available 
+        await this.checkForRootUser();
+
+        // Optionally retrieve the uid and gid
+        let permissionIds = await this.getUidAndGid()
+            .catch(() => ({}));
+
+        // GUARD: Check if we need to create users
+        if (this.options.createPostgresUser 
+            && !('uid' in permissionIds) 
+            && !('gid' in permissionIds)
+        ) {
+            try {
+                // Create the group and user
+                await execAsync('groupadd postgres');
+                await execAsync('useradd -g postgres postgres');
+
+                // Re-treieve the permission ids now the user exists
+                permissionIds = await this.getUidAndGid();
+            } catch (err) {
+                console.error(err);
+                throw new Error('Failed to create and initialize a new user on this system.');
+            }
+        }
+
+        // GUARD: Ensure that the data directory is owned by the created user
+        if (this.options.createPostgresUser) {
+            if (!('uid' in permissionIds)) {
+                throw new Error('Failed to retrieve the uid for the newly created user.');
+            }
+
+            // Create the data directory and have the user own it, so we
+            // don't get any permission errors
+            await fs.mkdir(this.options.databaseDir, { recursive: true });
+            await fs.chown(this.options.databaseDir, permissionIds.uid, permissionIds.gid);
+        }
+
         // Create a file on disk that contains the password in plaintext
         const randomId = crypto.randomBytes(6).readUIntLE(0,6).toString(36);
         const passwordFile = path.resolve(tmpdir(), `pg-password-${randomId}`);
@@ -118,7 +171,7 @@ class EmbeddedPostgres {
                 `--username=${this.options.user}`,
                 `--pwfile=${passwordFile}`,
                 ...this.options.initdbFlags,
-            ], { stdio: 'inherit' });
+            ], { stdio: 'inherit', ...permissionIds });
 
             process.on('exit', (code) => {
                 if (code === 0) {
@@ -139,6 +192,12 @@ class EmbeddedPostgres {
      * shut down when the script exits.
      */
     async start() {
+        // Optionally retrieve the uid and gid
+        const permissionIds = await this.getUidAndGid()
+            .catch(() => { 
+                throw new Error('Postgres cannot run as a root user. embedded-postgres could not find a postgres user to run as instead. Consider using the `createPostgresUser` option.'); 
+            });
+
         // Greedily make the file executable, in case it is not
         await fs.chmod(postgres, '755');
 
@@ -151,7 +210,7 @@ class EmbeddedPostgres {
                 '-p',
                 this.options.port.toString(),
                 ...this.options.postgresFlags,
-            ]);
+            ], { ...permissionIds });
 
             // Connect to stderr, as that is where the messages get sent
             this.process.stderr?.on('data', (chunk: Buffer) => {
@@ -256,6 +315,59 @@ class EmbeddedPostgres {
         // Clean up client
         await client.end();
     }
+
+    /**
+     * Warn the user in case they're trying to run this library as a root user
+     */
+    private async checkForRootUser() {
+        // GUARD: Ensure that the user isn't root
+        if (!this.isRootUser) {
+            return;
+        }
+
+        // Attempt to retrieve the uid and gid for the postgres user. This check
+        // will throw and error when the postgres user doesn't exist
+        try {
+            await this.getUidAndGid();
+        } catch (err) {
+            // GUARD: No user exists, but check that a postgres user should be created
+            if (!this.options.createPostgresUser) {
+                throw new Error('You are running this script as root. Postgres does not support running as root. If you wish to continue, configure embedded-postgres to create a Postgres user by setting the `createPostgresUser` option to true.');
+            }
+        }
+    }
+
+    /**
+     * Retrieve the uid and gid for a particular user
+     */
+    private async getUidAndGid(name = 'postgres') {
+        if (!this.isRootUser) {
+            return {} as Record<string, never>;
+        }
+
+        const [uid, gid] = await Promise.all([
+            execAsync(`id -u ${name}`).then(Number.parseInt),
+            execAsync(`id -g ${name}`).then(Number.parseInt),
+        ]);
+
+        return { uid, gid };
+    }
+}
+
+/**
+ * A promisified version of the exec API that either throws on errors or returns
+ * the string results from the executed command.
+ */
+async function execAsync(command: string) {
+    return new Promise<string>((resolve, reject) => {
+        exec(command, (error, stdout) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(stdout);
+            }
+        });
+    });
 }
 
 /**
