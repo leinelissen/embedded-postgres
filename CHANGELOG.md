@@ -1,3 +1,39 @@
+# [1.0.0](https://github.com/leinelissen/embedded-postgres/compare/v15.3.0-beta.9...v1.0.0) (2023-07-11)
+
+
+
+# [15.3.0-beta.9](https://github.com/leinelissen/embedded-postgres/compare/v14.8.0-beta.9...v15.3.0-beta.9) (2023-07-11)
+
+
+
+# [14.8.0-beta.9](https://github.com/leinelissen/embedded-postgres/compare/v13.11.0-beta.9...v14.8.0-beta.9) (2023-07-11)
+
+
+
+# [13.11.0-beta.9](https://github.com/leinelissen/embedded-postgres/compare/v12.15.0-beta.9...v13.11.0-beta.9) (2023-07-11)
+
+
+
+# [12.15.0-beta.9](https://github.com/leinelissen/embedded-postgres/compare/v11.20.0-beta.9...v12.15.0-beta.9) (2023-07-11)
+
+
+
+# [11.20.0-beta.9](https://github.com/leinelissen/embedded-postgres/compare/v15.3.0-beta.8...v11.20.0-beta.9) (2023-07-11)
+
+
+### Bug Fixes
+
+* camelCase instead of snake_case ([5bb4243](https://github.com/leinelissen/embedded-postgres/commit/5bb42438b578acd2508ec42c27af27b3d1de679b))
+
+
+### Features
+
+* add option for automatically creating postgres user ([f0d859c](https://github.com/leinelissen/embedded-postgres/commit/f0d859caf9ac2596d6524a613c21506aae3a3369))
+* allow injecting postgres and initdb flags ([09ab2ee](https://github.com/leinelissen/embedded-postgres/commit/09ab2ee2b603c9e1376a5241a17a77d8ec651645))
+* allow specifying error handlers ([56f696b](https://github.com/leinelissen/embedded-postgres/commit/56f696b85213a1c783bd024cfa49d0ddbc8b86da))
+
+
+
 # [15.3.0-beta.8](https://github.com/leinelissen/embedded-postgres/compare/v14.8.0-beta.8...v15.3.0-beta.8) (2023-05-22)
 
 
