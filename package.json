@@ -12,13 +12,15 @@
     "build": "lerna run build --parallel",
     "download": "lerna run download --parallel",
     "install": "lerna exec -- npm install --force",
-    "docs": "lerna run docs --parallel"
+    "docs": "lerna run docs --parallel",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0"
   },
   "devDependencies": {
     "@tsconfig/node12": "^1.0.9",
     "@types/node": "^17.0.40",
     "@typescript-eslint/eslint-plugin": "^5.27.1",
     "@typescript-eslint/parser": "^5.27.1",
+    "conventional-changelog-cli": "^3.0.0",
     "eslint": "^8.17.0",
     "lerna": "^5.0.0",
     "typedoc": "^0.24.8",
