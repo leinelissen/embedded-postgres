@@ -1,3 +1,5 @@
+embedded-postgres / [Exports](modules.md)
+
 # embedded-postgres
 A Node package that allows you to spawn a Postgresql cluster programatically.
 
@@ -40,7 +42,6 @@ async function main() {
 
 main();
 ```
-
 
 ## Credits
 Embedded Postgres was created by Lei Nelissen for [BMD
