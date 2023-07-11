@@ -11,7 +11,8 @@
     "start": "lerna run start --parallel",
     "build": "lerna run build --parallel",
     "download": "lerna run download --parallel",
-    "install": "lerna exec -- npm install --force"
+    "install": "lerna exec -- npm install --force",
+    "docs": "lerna run docs --parallel"
   },
   "devDependencies": {
     "@tsconfig/node12": "^1.0.9",
