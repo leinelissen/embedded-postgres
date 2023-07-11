@@ -28,6 +28,16 @@ interface PostgresOptions {
     /** Whether all data should be left in place when the database is shut down.
      * Defaults to true. */
     persistent: boolean;
+    /** Pass any additional flags to the initdb process. You can find all
+     * available flags here:
+     * https://www.postgresql.org/docs/current/app-initdb.html. Flags should be
+     * passed as a string array, e.g. `["--debug"]` or `["--locale=en-GB"]`  */
+    initdbFlags: string[];
+    /** Pass any additional flags to the postgres process. You can find all
+     * available flags here:
+     * https://www.postgresql.org/docs/current/app-postgres.html. Flags should
+     * be passed as a string array, e.g. `["--debug"]` or `["--locale=en-GB"]`  */
+    postgresFlags: string[];
 }
 
 /**
@@ -47,6 +57,8 @@ const defaults: PostgresOptions = {
     password: 'password',
     authMethod: 'password',
     persistent: true,
+    initdbFlags: [],
+    postgresFlags: [],
 };
 
 /**
@@ -105,6 +117,7 @@ class EmbeddedPostgres {
                 `--auth=${this.options.authMethod}`,
                 `--username=${this.options.user}`,
                 `--pwfile=${passwordFile}`,
+                ...this.options.initdbFlags,
             ], { stdio: 'inherit' });
 
             process.on('exit', (code) => {
@@ -137,6 +150,7 @@ class EmbeddedPostgres {
                 this.options.databaseDir,
                 '-p',
                 this.options.port.toString(),
+                ...this.options.postgresFlags,
             ]);
 
             // Connect to stderr, as that is where the messages get sent
