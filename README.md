@@ -32,7 +32,7 @@ import EmbeddedPostgres from 'embedded-postgres';
 async function main() {
     // Create the object
     const pg = new EmbeddedPostgres({
-        data_dir: './data/db',
+        databaseDir: './data/db',
         user: 'postgres',
         password: 'password',
         port: 5432,

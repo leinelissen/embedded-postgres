@@ -14,7 +14,7 @@ const { postgres, initdb } = getBinaries();
  */
 interface PostgresOptions {
     /** The location where the data should be persisted to. Defaults to: `./data/db` */
-    database_dir: string;
+    databaseDir: string;
     /** The port where the Postgres database should be listening. Defaults to:
      *  `5432` */
     port: number;
@@ -24,19 +24,28 @@ interface PostgresOptions {
     password: string;
     /** The authentication method to use when authenticating against Postgres.
      * Defaults to `password`  */
-    auth_method: 'scram-sha-256' | 'password' | 'md5';
+    authMethod: 'scram-sha-256' | 'password' | 'md5';
     /** Whether all data should be left in place when the database is shut down.
      * Defaults to true. */
     persistent: boolean;
 }
 
+/**
+ * Previosuly, options were specified in snake_case rather than camelCase. Old
+ * options are still translated to new variants.
+ */
+interface LegacyOptions {
+    database_dir: string;
+    auth_method: 'scram-sha-256' | 'password' | 'md5';
+}
+
 // The default configuration options for the class
 const defaults: PostgresOptions = {
-    database_dir: path.join(process.cwd(), 'data', 'db'),
+    databaseDir: path.join(process.cwd(), 'data', 'db'),
     port: 5432,
     user: 'postgres',
     password: 'password',
-    auth_method: 'password',
+    authMethod: 'password',
     persistent: true,
 };
 
@@ -57,8 +66,18 @@ class EmbeddedPostgres {
     private process?: ChildProcess;
 
     constructor(options: Partial<PostgresOptions> = {}) {
+        // Options were previously specified in snake_case rather than
+        // camelCase. We still want to accept the old style of options.
+        const legacyOptions: Partial<PostgresOptions> = {};
+        if ((options as LegacyOptions).database_dir) { 
+            legacyOptions.databaseDir = (options as LegacyOptions).database_dir; 
+        }
+        if ((options as LegacyOptions).auth_method) { 
+            legacyOptions.authMethod = (options as LegacyOptions).auth_method; 
+        }
+
         // Assign default options to options object
-        this.options = Object.assign({}, defaults, options);
+        this.options = Object.assign({}, defaults, legacyOptions, options);
 
         instances.add(this);
     }
@@ -82,8 +101,8 @@ class EmbeddedPostgres {
         // Initialize the database
         await new Promise<void>((resolve, reject) => {
             const process = spawn(initdb, [
-                `--pgdata=${this.options.database_dir}`,
-                `--auth=${this.options.auth_method}`,
+                `--pgdata=${this.options.databaseDir}`,
+                `--auth=${this.options.authMethod}`,
                 `--username=${this.options.user}`,
                 `--pwfile=${passwordFile}`,
             ], { stdio: 'inherit' });
@@ -115,7 +134,7 @@ class EmbeddedPostgres {
             // Spawn a postgres server
             this.process = spawn(postgres, [
                 '-D',
-                this.options.database_dir,
+                this.options.databaseDir,
                 '-p',
                 this.options.port.toString(),
             ]);
@@ -160,7 +179,7 @@ class EmbeddedPostgres {
         // GUARD: Additional work if database is not persistent
         if (this.options.persistent === false) {
             // Delete the data directory
-            await fs.rm(this.options.database_dir, { recursive: true, force: true });
+            await fs.rm(this.options.databaseDir, { recursive: true, force: true });
         }
     }
 
