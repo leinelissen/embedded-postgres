@@ -70,7 +70,7 @@ Additionally, we track the binaries that are created upstream in [zonky's
 embedded-postgres-binaries](https://github.com/zonkyio/embedded-postgres). This
 leads to the following current support matrix:
 
-| Platform / Architecture | 11.20.0 | 12.15.0 | 13.11.0 | 14.8.0 |  15.3.0 |
+| Platform / Architecture | 11.21.0 | 12.16.0 | 13.12.0 | 14.9.0 |  15.4.0 |
 |---|---|---|---|---|---|
 | 🍎 Darwin / x64 |  ✅ |  ✅ |  ✅ |  ✅ |  ✅ |
 | 🍎 Darwin / arm64[[1]](https://github.com/zonkyio/embedded-postgres/issues/86#issuecomment-1120425822) | 🚫 |  🚫 |  🚫 |  🚫 |  ✅ |  ✅ |
