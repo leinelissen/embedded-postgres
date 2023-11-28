@@ -78,6 +78,8 @@ class EmbeddedPostgres {
      * to be created. It will populate the data directory with the right
      * settings. If your Postgres cluster is already initialised, you don't need
      * to call this function again.
+     * NOTE: If you have `persistent` set to false, this method WILL DELETE your
+     * database files.
      */
     async initialise() {
         // GUARD: Check that a postgres user is available 
@@ -126,6 +128,11 @@ class EmbeddedPostgres {
         await fs.chmod(postgres, '755');
         await fs.chmod(initdb, '755');
 
+        // GUARD: Additional work if database is not persistent
+        if (this.options.persistent === false) {
+            await this.deleteDataDirectory();
+        }
+
         // Initialize the database
         await new Promise<void>((resolve, reject) => {
             const process = spawn(initdb, [
@@ -151,7 +158,7 @@ class EmbeddedPostgres {
 
     /**
      * Start the Postgres cluster with the given configuration. The cluster is
-     * started as a seperate process, unmanaged by NodeJS. It is automatically
+     * started as a separate process, unmanaged by NodeJS. It is automatically
      * shut down when the script exits.
      */
     async start() {
@@ -179,7 +186,7 @@ class EmbeddedPostgres {
             this.process.stderr?.on('data', (chunk: Buffer) => {
                 // Parse the data as a string and log it
                 const message = chunk.toString('utf-8');
-                this.options.onLog(message); 
+                this.options.onLog(message);
 
                 // GUARD: Check for the right message to determine server start
                 if (message.includes('database system is ready to accept connections')) {
@@ -200,23 +207,38 @@ class EmbeddedPostgres {
      * database files. You will need to call `.initialise()` again after executing
      * this method.
      */
-    async stop() {
-        // GUARD: If no database is running, immdiately return the function.
-        if (!this.process) {
-            return;
-        }
+    async stop({ exitTimeOut = 100, killTimeOut = 20, checkTimeout = 1, waitTimeout = 20, log = false } = {}) {
+        // GUARD: If no database is running, immediately return the function.
+        const pg = this.process;
+        if (!pg) return;
 
         // Kill the existing postgres process
-        await new Promise<void>((resolve) => {
-            this.process?.on('exit', resolve);
-            this.process?.kill('SIGINT');
+        const start = Date.now();
+        const kill = (signal: NodeJS.Signals, timeout: number, done: (killed: boolean) => void): unknown =>
+            timeout > 0
+                ? pg.kill(signal)
+                    ? setTimeout(() => kill(signal, timeout - checkTimeout, done), checkTimeout)
+                    : setTimeout(() => done(true), waitTimeout)
+                : done(false); 
+
+        const killed = await new Promise<boolean>((resolve) => {
+            pg.on('exit', () => setTimeout(() => resolve(true), waitTimeout));
+            kill('SIGINT', exitTimeOut, (killed) => killed ? resolve(true) : kill('SIGTERM', killTimeOut, resolve));
         });
+
+        if (log) console.log(`${killed ? 'Stopped' : 'Failed to stop'} Postgres in ${Date.now() - start}ms`); 
 
         // GUARD: Additional work if database is not persistent
         if (this.options.persistent === false) {
-            // Delete the data directory
-            await fs.rm(this.options.databaseDir, { recursive: true, force: true });
+            await this.deleteDataDirectory();
         }
+    }
+
+    /**
+     * Delete the data directory.
+     */
+    async deleteDataDirectory() {
+        await fs.rm(this.options.databaseDir, { recursive: true, force: true });
     }
 
     /**
@@ -247,7 +269,7 @@ class EmbeddedPostgres {
      * Create a database with a given name on the cluster
      */
     async createDatabase(name: string) {
-        // GUARD: Clluster must be running for performing database operations
+        // GUARD: Cluster must be running for performing database operations
         if (!this.process) {
             throw new Error('Your cluster must be running before you can create a database');
         }
@@ -265,7 +287,7 @@ class EmbeddedPostgres {
      * Drop a database with a given name on the cluster
      */
     async dropDatabase(name: string) {
-        // GUARD: Clluster must be running for performing database operations
+        // GUARD: Cluster must be running for performing database operations
         if (!this.process) {
             throw new Error('Your cluster must be running before you can create a database');
         }
