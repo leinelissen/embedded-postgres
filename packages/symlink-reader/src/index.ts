@@ -40,7 +40,11 @@ async function deepRead(directory: string) {
  * package that is calling it. It will then output a file called
  * `pg-symlinks.json` in said directory that contains all symlinks that were found.
  */
-export async function readSymlinks() {
+export async function readSymlinks(isNecessary: boolean) {
+    if (!isNecessary) {
+        return;
+    }
+
     // First, pull all files out of the folder
     const entries = await deepRead(binaryDirectory);
     

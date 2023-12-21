@@ -53,6 +53,16 @@ function mapPlatform(platform: string): AcceptedPlatforms {
  * @param platform The platform for which the binary should be downloaded
  */
 export async function downloadBinaries(version: string, arch: string, platform: string) {
+    // GUARD: We'll only download mismatching binaries with the current system
+    // arch and platform if the "--all" flag is supplied
+    if (!process.argv.includes('--all') 
+        && arch.toString() !== process.arch
+        && platform.toString() !== process.platform
+    ) {
+        console.log(`Skipping download for ${platform}-${arch}, because it does not match the local system (${process.platform}-${process.arch}). If you wish to download all binaries, re-run this command with the "--all" flag.`);
+        return false;
+    }
+
     // Form URL from parameters
     const mappedArch = mapArchitecture(arch);
     const mappedPlatform = mapPlatform(platform);
@@ -87,4 +97,6 @@ export async function downloadBinaries(version: string, arch: string, platform: 
     // Then extract the file with tar
     spawnSync('tar', ['xvf', 'native.txz', '-C', 'native'], { stdio: 'inherit' });
     await fs.unlink('native.txz');
+
+    return true;
 }
