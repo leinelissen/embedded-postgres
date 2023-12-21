@@ -1,4 +1,4 @@
-const { downloadBinaries } = require('@embedded-postgres/downloader');
-const { readSymlinks } = require('@embedded-postgres/symlink-reader')
-const { version, os: [ platform ], cpu: [ arch ] } = require('../package.json');
-downloadBinaries(process.argv[2] || version, arch, platform).then(readSymlinks);
+import { downloadBinaries } from '@embedded-postgres/downloader';
+import { readSymlinks } from '@embedded-postgres/symlink-reader';
+import { version, os, cpu } from '../package.json';
+downloadBinaries(process.argv[2] || version, cpu.arch, os.platform).then(readSymlinks);
