@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: Test
+
+on: [push]
+
+jobs:
+  test:
+    name: 'Test'
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20.x
+      - run: npm ci --force
+      - run: npm run download
+      - run: cd packages/embedded-postgres
+      - run: npm test
+
+
+
