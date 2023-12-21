@@ -1,5 +1,4 @@
 import AdmZip from 'adm-zip';
-import fetch from 'node-fetch';
 import fs from 'fs/promises';
 import { spawnSync } from 'child_process';
 

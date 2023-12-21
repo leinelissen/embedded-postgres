@@ -7,10 +7,10 @@ import { ChildProcess, spawn, exec } from 'child_process';
 import { Client } from 'pg';
 import AsyncExitHook from 'async-exit-hook';
 
-import getBinaries from './binary';
-import { PostgresOptions } from './types';
+import getBinaries from './binary.js';
+import { PostgresOptions } from './types.js';
 
-const { postgres, initdb } = getBinaries();
+const bin = getBinaries();
 
 /**
  * Previosuly, options were specified in snake_case rather than camelCase. Old
@@ -80,6 +80,8 @@ class EmbeddedPostgres {
      * to call this function again.
      */
     async initialise() {
+        const { postgres, initdb } = await bin;
+
         // GUARD: Check that a postgres user is available 
         await this.checkForRootUser();
 
@@ -155,6 +157,8 @@ class EmbeddedPostgres {
      * shut down when the script exits.
      */
     async start() {
+        const { postgres } = await bin;
+
         // Optionally retrieve the uid and gid
         const permissionIds = await this.getUidAndGid()
             .catch(() => { 
@@ -212,6 +216,9 @@ class EmbeddedPostgres {
             this.process?.kill('SIGINT');
         });
 
+        // Clean up process
+        this.process = undefined;
+
         // GUARD: Additional work if database is not persistent
         if (this.options.persistent === false) {
             // Delete the data directory
@@ -247,7 +254,7 @@ class EmbeddedPostgres {
      * Create a database with a given name on the cluster
      */
     async createDatabase(name: string) {
-        // GUARD: Clluster must be running for performing database operations
+        // GUARD: Cluster must be running for performing database operations
         if (!this.process) {
             throw new Error('Your cluster must be running before you can create a database');
         }
@@ -265,7 +272,7 @@ class EmbeddedPostgres {
      * Drop a database with a given name on the cluster
      */
     async dropDatabase(name: string) {
-        // GUARD: Clluster must be running for performing database operations
+        // GUARD: Cluster must be running for performing database operations
         if (!this.process) {
             throw new Error('Your cluster must be running before you can create a database');
         }
@@ -351,4 +358,4 @@ async function gracefulShutdown(done: () => void) {
 // Register graceful shutdown function
 AsyncExitHook(gracefulShutdown);
 
-export = EmbeddedPostgres;
+export default EmbeddedPostgres;

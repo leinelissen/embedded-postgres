@@ -2,7 +2,8 @@
   "name": "@embedded-postgres/linux-arm",
   "version": "16.1.1-beta.9",
   "description": "",
-  "main": "dist/index.js",
+  "exports": "./dist/index.js",
+  "type": "module",
   "scripts": {
     "start": "tsc -w",
     "build": "tsc",
@@ -30,5 +31,8 @@
     "/native/**/*",
     "/scripts/hydrate-symlinks.js"
   ],
+  "engines": {
+    "node": ">=16"
+  },
   "gitHead": "5b3e39624b6a9a1e3d53404684ee1239efa19020"
 }
