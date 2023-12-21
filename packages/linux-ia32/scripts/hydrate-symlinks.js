@@ -12,7 +12,8 @@ async function hydrateSymlinks() {
     // Retrieve the symlinks
     /** @type {{ source: string, target: string }[]} */
     const symlinks = await fs.readFile(symlinkFile, { encoding: 'utf-8' })
-        .then(JSON.parse);
+        .then(JSON.parse)
+        .catch(() => ([]));
 
     // Re-hydrate all of them
     for (let { source, target } of symlinks) {
