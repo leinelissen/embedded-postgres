@@ -1,6 +1,7 @@
 import AdmZip from 'adm-zip';
 import fs from 'fs/promises';
 import { spawnSync } from 'child_process';
+import { coerce } from 'semver';
 
 type AcceptedArchs = 'amd64' | 'arm64v8' | 'arm32v6' | 'arm32v7' | 'i386' | 'ppc64le';
 type AcceptedPlatforms = 'darwin' | 'linux' | 'windows';
@@ -10,7 +11,7 @@ type AcceptedPlatforms = 'darwin' | 'linux' | 'windows';
  * Postgresql binaries.
  */
 function mapArchitecture(arch: string): AcceptedArchs {
-    switch (arch) {
+    switch (arch.toString()) {
         case 'arm':
             return 'arm32v7';
         case 'arm64':
@@ -31,7 +32,7 @@ function mapArchitecture(arch: string): AcceptedArchs {
  * Postgresql binaries.
  */
 function mapPlatform(platform: string): AcceptedPlatforms {
-    switch (platform) {
+    switch (platform.toString()) {
         case 'win32':
             return 'windows';
         case 'darwin':
@@ -55,7 +56,8 @@ export async function downloadBinaries(version: string, arch: string, platform: 
     // Form URL from parameters
     const mappedArch = mapArchitecture(arch);
     const mappedPlatform = mapPlatform(platform);
-    const url = `https://repo1.maven.org/maven2/io/zonky/test/postgres/embedded-postgres-binaries-${mappedPlatform}-${mappedArch}/${version}/embedded-postgres-binaries-${mappedPlatform}-${mappedArch}-${version}.jar`;
+    const mappedVersion = coerce(version);
+    const url = `https://repo1.maven.org/maven2/io/zonky/test/postgres/embedded-postgres-binaries-${mappedPlatform}-${mappedArch}/${mappedVersion}/embedded-postgres-binaries-${mappedPlatform}-${mappedArch}-${mappedVersion}.jar`;
 
     // Download file
     const jar = await fetch(url).then((f) => {
