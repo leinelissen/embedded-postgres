@@ -20,8 +20,9 @@ jobs:
       - run: npm ci --force
       - run: npm run build
       - run: npm run download
-      - run: cd packages/embedded-postgres
-      - run: npm test
+      - run: |
+          cd packages/embedded-postgres
+          npm test
 
 
 
