@@ -25,9 +25,8 @@ beforeEach(async () => {
 afterEach(async () => {
     // Stop client
     await pg?.stop();
-
+    
     // Remove all cluster files
-    console.log('DELETING');
     await fs.rm(path.join(DB_PATH), { recursive: true, force: true });
 });
 

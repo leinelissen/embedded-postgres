@@ -1,7 +1,7 @@
 import path from 'path';
 import crypto from 'crypto';
 import fs from 'fs/promises';
-import { tmpdir, userInfo } from 'os';
+import { platform, tmpdir, userInfo } from 'os';
 import { ChildProcess, spawn, exec } from 'child_process';
 
 import { Client } from 'pg';
@@ -136,7 +136,7 @@ class EmbeddedPostgres {
                 `--username=${this.options.user}`,
                 `--pwfile=${passwordFile}`,
                 ...this.options.initdbFlags,
-            ], { stdio: 'inherit', ...permissionIds });
+            ], { stdio: 'inherit', shell: true, ...permissionIds,  });
 
             process.on('exit', (code) => {
                 if (code === 0) {
@@ -169,7 +169,6 @@ class EmbeddedPostgres {
         await fs.chmod(postgres, '755');
 
         await new Promise<void>((resolve, reject) => {
-
             // Spawn a postgres server
             this.process = spawn(postgres, [
                 '-D',
@@ -177,7 +176,7 @@ class EmbeddedPostgres {
                 '-p',
                 this.options.port.toString(),
                 ...this.options.postgresFlags,
-            ], { ...permissionIds });
+            ], { shell: true, ...permissionIds });
 
             // Connect to stderr, as that is where the messages get sent
             this.process.stderr?.on('data', (chunk: Buffer) => {
@@ -212,8 +211,22 @@ class EmbeddedPostgres {
 
         // Kill the existing postgres process
         await new Promise<void>((resolve) => {
+            // Register a handler for when the process finally exists
             this.process?.on('exit', resolve);
-            this.process?.kill('SIGINT');
+
+            // GUARD: Check if we're on Windows, since Windows doesn't support SIGINT
+            if (platform() === 'win32') {
+                // GUARD: Double check the pid is there to keep TypeScript happy
+                if (!this.process?.pid) {
+                    throw new Error('Could not find process PID');
+                }
+
+                // Actually kill the process using the Windows taskkill command
+                spawn('taskkill', ['/pid', this.process.pid.toString(), '/f', '/t'])
+            } else {
+                // If on a sane OS, simply kill using SIGINT
+                this.process?.kill('SIGINT');
+            }
         });
 
         // Clean up process
