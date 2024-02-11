@@ -222,7 +222,7 @@ class EmbeddedPostgres {
                 }
 
                 // Actually kill the process using the Windows taskkill command
-                spawn('taskkill', ['/pid', this.process.pid.toString(), '/f', '/t'])
+                spawn('taskkill', ['/pid', this.process.pid.toString(), '/f', '/t']);
             } else {
                 // If on a sane OS, simply kill using SIGINT
                 this.process?.kill('SIGINT');
