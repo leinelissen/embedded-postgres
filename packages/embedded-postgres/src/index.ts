@@ -136,7 +136,7 @@ class EmbeddedPostgres {
                 `--username=${this.options.user}`,
                 `--pwfile=${passwordFile}`,
                 ...this.options.initdbFlags,
-            ], { stdio: 'inherit', shell: true, ...permissionIds,  });
+            ], { stdio: 'inherit', ...permissionIds,  });
 
             process.on('exit', (code) => {
                 if (code === 0) {
@@ -176,7 +176,7 @@ class EmbeddedPostgres {
                 '-p',
                 this.options.port.toString(),
                 ...this.options.postgresFlags,
-            ], { shell: true, ...permissionIds });
+            ], { ...permissionIds });
 
             // Connect to stderr, as that is where the messages get sent
             this.process.stderr?.on('data', (chunk: Buffer) => {
