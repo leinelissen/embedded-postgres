@@ -117,7 +117,43 @@ seen here:
 
 ## Contributing
 This package is open to issues, feedback, ideas and pull requests. Create an
-issue on this repository to get started!
+issue on this repository to get started! In order to get started with
+development, you might need some extra pointers
+
+### Development
+In order to get yourself situated for development, you will need to the
+reopistory up and running. In order to make this work, start with a relatively
+recent install of NodeJS (at least v18, v20+ recommended). You can then run this
+command to install all packages:
+```
+npm install --force
+```
+
+NOTE: You must include `--force` or else NPM will refuse to install the
+dependencies for all packages, including those not for the current architecture.
+
+Then, you must pre-compile all Typescript using the following command:
+```
+npm run build
+```
+
+As soon as that is complete, we'll download the requisite PostgresQL binaries
+for your particular architecture using:
+```
+npm run download
+```
+
+Lastly, you can hop over to `packages/embedded-postgres` and do some development
+there. You can force automatic recompliation of the Typescript files by running:
+```
+npm start
+```
+
+Don't forget to add and run tests when you are developing new functionality. Add
+them to `tests/index.test.ts`, and run the tests by running:
+```
+npm teest
+```
 
 <br />
 
