@@ -1,6 +1,6 @@
 {
   "name": "@embedded-postgres/linux-x64",
-  "version": "15.5.1-beta.11",
+  "version": "16.1.1-beta.11",
   "description": "",
   "exports": "./dist/index.js",
   "type": "module",
@@ -20,8 +20,8 @@
     "x64"
   ],
   "devDependencies": {
-    "@embedded-postgres/downloader": "^15.5.1-beta.11",
-    "@embedded-postgres/symlink-reader": "^15.5.1-beta.11"
+    "@embedded-postgres/downloader": "^16.1.1-beta.11",
+    "@embedded-postgres/symlink-reader": "^16.1.1-beta.11"
   },
   "publishConfig": {
     "access": "public"
