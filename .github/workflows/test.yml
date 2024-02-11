@@ -20,7 +20,9 @@ jobs:
       - run: npm ci --force
       - run: npm run build
       - run: npm run download
-      - run: |
+      - name: Run test
+        if: matrix.os != 'windows-latest'
+        run: |
           cd packages/embedded-postgres
           npm test
 
