@@ -115,22 +115,13 @@ export async function downloadBinaries(version: string, arch: string, platform: 
     // Then extract the file with either tar, if it's available...
     // NOTE: we cannot use tar on windows because it will fuck up the symlinks
     if (os.platform() !== 'win32' && hasBinary(['tar', 'xz'])) {
-        // Call xz first, because tar on Windows hangs if it has to call a decompressor externally
-        const xzOutput = spawnSync('xz', ['-d', 'native.txz'], { stdio: 'inherit' });
-
-        // GUARD: Check that the output is satisfactory
-        if (xzOutput.status !== 0) {
-            console.error(xzOutput.output);
-            throw new Error('Failed to decompress tar with binaries...');
-        }
-
         // Call tar
         const tarOutput = spawnSync('tar', ['xvf', 'native.txz', '-C', 'native'], { stdio: 'inherit' });
         
         // GUARD: Check that the output is satisfactory
         if (tarOutput.status !== 0) {
             console.error(tarOutput.output);
-            throw new Error('Failed to tar with binaries...');
+            throw new Error('Failed to extract tar with binaries...');
         }
     } else if (hasBinary(['7z'])) {
         // Call 7zip first, because tar on Windows hangs if it has to call a decompressor externally
