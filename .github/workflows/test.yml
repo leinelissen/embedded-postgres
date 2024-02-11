@@ -19,6 +19,7 @@ jobs:
           node-version: 20.x
       - run: npm ci --force
       - run: npm run build
+      - run: npm run lint
       - run: npm run download
       - name: Run test
         if: matrix.os != 'windows-latest'
