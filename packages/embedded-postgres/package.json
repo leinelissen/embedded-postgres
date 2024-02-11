@@ -9,7 +9,7 @@
     "build": "tsc",
     "lint": "eslint ./src --ext ts",
     "docs": "typedoc --plugin typedoc-plugin-markdown ./src/types.ts --theme markdown --excludePrivate",
-    "test": "vitest --bail 1 --test-timeout 120000 --hook-timeout 30000"
+    "test": "vitest"
   },
   "keywords": [
     "postgres",
