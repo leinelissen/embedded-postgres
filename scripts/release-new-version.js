@@ -41,7 +41,7 @@ async function main() {
         await lernaRun({
             cwd: process.cwd(),
             script: 'download',
-            '--': [pgVersion, '--all'],
+            '--': [pgVersion, '--', '--all'],
             ignore,
         });
 
