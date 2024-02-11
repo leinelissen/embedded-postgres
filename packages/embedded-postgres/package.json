@@ -1,6 +1,6 @@
 {
   "name": "embedded-postgres",
-  "version": "11.22.1-beta.10",
+  "version": "12.17.1-beta.10",
   "description": "A package to run an embedded Postgresql database right from NodeJS",
   "exports": "./dist/index.js",
   "type": "module",
@@ -20,7 +20,7 @@
   "author": "Lei Nelissen",
   "license": "MIT",
   "devDependencies": {
-    "@embedded-postgres/symlink-reader": "^11.22.1-beta.10",
+    "@embedded-postgres/symlink-reader": "^12.17.1-beta.10",
     "@types/async-exit-hook": "^2.0.0",
     "@types/pg": "^8.6.5",
     "eslint": "^8.56.0",
@@ -28,14 +28,14 @@
     "vitest": "^1.1.0"
   },
   "optionalDependencies": {
-    "@embedded-postgres/darwin-arm64": "^11.22.1-beta.10",
-    "@embedded-postgres/darwin-x64": "^11.22.1-beta.10",
-    "@embedded-postgres/linux-arm": "^11.22.1-beta.10",
-    "@embedded-postgres/linux-arm64": "^11.22.1-beta.10",
-    "@embedded-postgres/linux-ia32": "^11.22.1-beta.10",
-    "@embedded-postgres/linux-ppc64": "^11.22.1-beta.10",
-    "@embedded-postgres/linux-x64": "^11.22.1-beta.10",
-    "@embedded-postgres/windows-x64": "^11.22.1-beta.10"
+    "@embedded-postgres/darwin-arm64": "^12.17.1-beta.10",
+    "@embedded-postgres/darwin-x64": "^12.17.1-beta.10",
+    "@embedded-postgres/linux-arm": "^12.17.1-beta.10",
+    "@embedded-postgres/linux-arm64": "^12.17.1-beta.10",
+    "@embedded-postgres/linux-ia32": "^12.17.1-beta.10",
+    "@embedded-postgres/linux-ppc64": "^12.17.1-beta.10",
+    "@embedded-postgres/linux-x64": "^12.17.1-beta.10",
+    "@embedded-postgres/windows-x64": "^12.17.1-beta.10"
   },
   "dependencies": {
     "async-exit-hook": "^2.0.1",
