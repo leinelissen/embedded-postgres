@@ -141,13 +141,15 @@ export async function downloadBinaries(version: string, arch: string, platform: 
             console.error(tarOutput.output);
             throw new Error('Failed to extract tar with binaries...');
         }
+
+        // Delete the intermediate format
+        await fs.unlink('native.tar');
     } else {
         // Abort to the user when unpacking utilities are missing
         throw new Error('Failed to unpack as system packages are missing. Please install both the "tar" and "xz" / "zstd" utils');
     }
 
-    // Remove the file
-    await fs.unlink('native.tar');
+    // Remove the archive
     await fs.unlink('native.txz');
 
     return true;
