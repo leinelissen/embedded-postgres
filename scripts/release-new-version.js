@@ -1,6 +1,6 @@
-const lernaRun = require('@lerna/run');
-const lernaVersion = require('@lerna/version');
-const lernaPublish = require('@lerna/publish');
+import lernaRun from '@lerna/run';
+import lernaVersion from '@lerna/version';
+import lernaPublish from '@lerna/publish';
 
 /**
  * Define a static set of versions that are supported. This means that only new
