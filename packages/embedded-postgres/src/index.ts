@@ -4,13 +4,14 @@ import fs from 'fs/promises';
 import { platform, tmpdir, userInfo } from 'os';
 import { ChildProcess, spawn, exec } from 'child_process';
 
-import { Client } from 'pg';
+import pg from 'pg';
 import AsyncExitHook from 'async-exit-hook';
 
 import getBinaries from './binary.js';
 import { PostgresOptions } from './types.js';
 
 const bin = getBinaries();
+const { Client } = pg;
 
 /**
  * Previosuly, options were specified in snake_case rather than camelCase. Old
