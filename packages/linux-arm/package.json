@@ -1,6 +1,6 @@
 {
   "name": "@embedded-postgres/linux-arm",
-  "version": "12.20.0-beta.12",
+  "version": "13.16.0-beta.12",
   "description": "",
   "exports": "./dist/index.js",
   "type": "module",
@@ -20,8 +20,8 @@
     "arm"
   ],
   "devDependencies": {
-    "@embedded-postgres/downloader": "^12.20.0-beta.12",
-    "@embedded-postgres/symlink-reader": "^12.20.0-beta.12"
+    "@embedded-postgres/downloader": "^13.16.0-beta.12",
+    "@embedded-postgres/symlink-reader": "^13.16.0-beta.12"
   },
   "publishConfig": {
     "access": "public"
