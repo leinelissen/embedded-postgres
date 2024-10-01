@@ -70,17 +70,16 @@ Additionally, we track the binaries that are created upstream in [zonky's
 embedded-postgres-binaries](https://github.com/zonkyio/embedded-postgres). This
 leads to the following current support matrix:
 
-| Platform / Architecture | 12.20.0 | 13.16.0 | 14.13.0 | 15.8.0 | 16.4.0 |
-17.0.0 |
-|---|---|---|---|---|---|
-| 🍎 Darwin / x64 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| 🍎 Darwin / arm64[[1]](https://github.com/zonkyio/embedded-postgres/issues/86#issuecomment-1120425822) | 🚫 | 🚫 | 🚫 | ✅ | ✅ | ✅ | ✅ |
-| 🪟 Windows / x64 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| 🐧 Linux / x64 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| 🐧 Linux / arm | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| 🐧 Linux / arm64 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| 🐧 Linux / ia32 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| 🐧 Linux / ppc64 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Platform / Architecture   | 12.20.0 | 13.16.0 | 14.13.0 | 15.8.0 | 16.4.0 | 17.0.0 |
+|---------------------------|---------|---------|---------|--------|--------|--------|
+| 🍎 Darwin / x64           | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 🍎 Darwin / arm64[[1]](https://github.com/zonkyio/embedded-postgres/issues/86#issuecomment-1120425822) | 🚫 | 🚫 | 🚫 | ✅ | ✅ | ✅ |
+| 🪟 Windows / x64          | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 🐧 Linux / x64            | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 🐧 Linux / arm            | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 🐧 Linux / arm64          | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 🐧 Linux / ia32           | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 🐧 Linux / ppc64          | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 In order to install a particular version, look for the latest tag in
 [NPM](https://www.npmjs.com/package/embedded-postgres). For example, if you
