@@ -7,11 +7,11 @@ import lernaPublish from '@lerna/publish';
  * binaries for thesse versions will be released.
  */
 const supportedVersions = [
-    // '12.20.0',
-    // '13.16.0',
-    // '14.13.0',
-    // '15.8.0',
-    // '16.4.0',
+    '12.20.0',
+    '13.16.0',
+    '14.13.0',
+    '15.8.0',
+    '16.4.0',
     '17.0.0',
 ];
 
