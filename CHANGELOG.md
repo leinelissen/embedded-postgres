@@ -1,4 +1,212 @@
-# [1.0.0](https://github.com/leinelissen/embedded-postgres/compare/v15.3.0-beta.9...v1.0.0) (2023-07-11)
+# [1.0.0](https://github.com/leinelissen/embedded-postgres/compare/v17.0.0-beta.13...v1.0.0) (2024-11-08)
+
+
+
+# [17.0.0-beta.13](https://github.com/leinelissen/embedded-postgres/compare/v16.4.0-beta.13...v17.0.0-beta.13) (2024-11-08)
+
+
+
+# [16.4.0-beta.13](https://github.com/leinelissen/embedded-postgres/compare/v15.8.0-beta.13...v16.4.0-beta.13) (2024-11-08)
+
+
+
+# [15.8.0-beta.13](https://github.com/leinelissen/embedded-postgres/compare/v14.13.0-beta.13...v15.8.0-beta.13) (2024-11-08)
+
+
+
+# [14.13.0-beta.13](https://github.com/leinelissen/embedded-postgres/compare/v13.16.0-beta.13...v14.13.0-beta.13) (2024-11-08)
+
+
+
+# [13.16.0-beta.13](https://github.com/leinelissen/embedded-postgres/compare/v12.20.0-beta.13...v13.16.0-beta.13) (2024-11-08)
+
+
+
+# [12.20.0-beta.13](https://github.com/leinelissen/embedded-postgres/compare/v17.0.0-beta.12...v12.20.0-beta.13) (2024-11-08)
+
+
+
+# [17.0.0-beta.12](https://github.com/leinelissen/embedded-postgres/compare/v16.4.0-beta.12...v17.0.0-beta.12) (2024-10-01)
+
+
+
+# [16.4.0-beta.12](https://github.com/leinelissen/embedded-postgres/compare/v15.8.0-beta.12...v16.4.0-beta.12) (2024-08-12)
+
+
+
+# [15.8.0-beta.12](https://github.com/leinelissen/embedded-postgres/compare/v14.13.0-beta.12...v15.8.0-beta.12) (2024-08-12)
+
+
+
+# [14.13.0-beta.12](https://github.com/leinelissen/embedded-postgres/compare/v13.16.0-beta.12...v14.13.0-beta.12) (2024-08-12)
+
+
+
+# [13.16.0-beta.12](https://github.com/leinelissen/embedded-postgres/compare/v12.20.0-beta.12...v13.16.0-beta.12) (2024-08-12)
+
+
+
+# [12.20.0-beta.12](https://github.com/leinelissen/embedded-postgres/compare/v16.2.0-beta.12...v12.20.0-beta.12) (2024-08-12)
+
+
+
+# [16.2.0-beta.12](https://github.com/leinelissen/embedded-postgres/compare/v15.6.0-beta.12...v16.2.0-beta.12) (2024-07-01)
+
+
+
+# [15.6.0-beta.12](https://github.com/leinelissen/embedded-postgres/compare/v14.11.0-beta.12...v15.6.0-beta.12) (2024-07-01)
+
+
+
+# [14.11.0-beta.12](https://github.com/leinelissen/embedded-postgres/compare/v13.14.0-beta.12...v14.11.0-beta.12) (2024-07-01)
+
+
+
+# [13.14.0-beta.12](https://github.com/leinelissen/embedded-postgres/compare/v12.18.0-beta.12...v13.14.0-beta.12) (2024-07-01)
+
+
+
+# [12.18.0-beta.12](https://github.com/leinelissen/embedded-postgres/compare/v16.2.0-beta.11...v12.18.0-beta.12) (2024-07-01)
+
+
+### Bug Fixes
+
+* esm updates ([3e85055](https://github.com/leinelissen/embedded-postgres/commit/3e85055bc52774984fbf391b6ce0446d4ae99374)), closes [#12](https://github.com/leinelissen/embedded-postgres/issues/12)
+
+
+
+# [16.2.0-beta.11](https://github.com/leinelissen/embedded-postgres/compare/v15.6.0-beta.11...v16.2.0-beta.11) (2024-02-11)
+
+
+
+# [15.6.0-beta.11](https://github.com/leinelissen/embedded-postgres/compare/v14.11.0-beta.11...v15.6.0-beta.11) (2024-02-11)
+
+
+
+# [14.11.0-beta.11](https://github.com/leinelissen/embedded-postgres/compare/v13.14.0-beta.11...v14.11.0-beta.11) (2024-02-11)
+
+
+
+# [13.14.0-beta.11](https://github.com/leinelissen/embedded-postgres/compare/v12.18.0-beta.11...v13.14.0-beta.11) (2024-02-11)
+
+
+
+# [12.18.0-beta.11](https://github.com/leinelissen/embedded-postgres/compare/v16.1.1-beta.11...v12.18.0-beta.11) (2024-02-11)
+
+
+
+## [16.1.1-beta.11](https://github.com/leinelissen/embedded-postgres/compare/v15.5.1-beta.11...v16.1.1-beta.11) (2024-02-11)
+
+
+
+## [15.5.1-beta.11](https://github.com/leinelissen/embedded-postgres/compare/v14.10.1-beta.11...v15.5.1-beta.11) (2024-02-11)
+
+
+
+## [14.10.1-beta.11](https://github.com/leinelissen/embedded-postgres/compare/v13.13.1-beta.11...v14.10.1-beta.11) (2024-02-11)
+
+
+
+## [13.13.1-beta.11](https://github.com/leinelissen/embedded-postgres/compare/v12.17.1-beta.11...v13.13.1-beta.11) (2024-02-11)
+
+
+
+## [12.17.1-beta.11](https://github.com/leinelissen/embedded-postgres/compare/v11.22.1-beta.11...v12.17.1-beta.11) (2024-02-11)
+
+
+
+## [11.22.1-beta.11](https://github.com/leinelissen/embedded-postgres/compare/v16.1.1-beta.10...v11.22.1-beta.11) (2024-02-11)
+
+
+### Bug Fixes
+
+* properly pass the --all flag to the downloader script ([4d29814](https://github.com/leinelissen/embedded-postgres/commit/4d29814c120fe13bb8f76754ed2740e76eb5ac37))
+
+
+
+## [16.1.1-beta.10](https://github.com/leinelissen/embedded-postgres/compare/v15.5.1-beta.10...v16.1.1-beta.10) (2024-02-11)
+
+
+
+## [15.5.1-beta.10](https://github.com/leinelissen/embedded-postgres/compare/v14.10.1-beta.10...v15.5.1-beta.10) (2024-02-11)
+
+
+
+## [14.10.1-beta.10](https://github.com/leinelissen/embedded-postgres/compare/v13.13.1-beta.10...v14.10.1-beta.10) (2024-02-11)
+
+
+
+## [13.13.1-beta.10](https://github.com/leinelissen/embedded-postgres/compare/v12.17.1-beta.10...v13.13.1-beta.10) (2024-02-11)
+
+
+
+## [12.17.1-beta.10](https://github.com/leinelissen/embedded-postgres/compare/v11.22.1-beta.10...v12.17.1-beta.10) (2024-02-11)
+
+
+
+## [11.22.1-beta.10](https://github.com/leinelissen/embedded-postgres/compare/v16.1.1-beta.9...v11.22.1-beta.10) (2024-02-11)
+
+
+### Bug Fixes
+
+* add missing semicolon ([427388d](https://github.com/leinelissen/embedded-postgres/commit/427388dfb7fe2fdf306839dc4b5fc13579290455))
+* allow proper shutdown of postgres process on windows as well ([92fb102](https://github.com/leinelissen/embedded-postgres/commit/92fb1020cf877aa01198fe2dda0bd55ce39394d6))
+* catch errors when reading symlinks file so devs can download binaries first ([89852c9](https://github.com/leinelissen/embedded-postgres/commit/89852c945a49a80c1b445c2818afbda72e3e7c2d))
+* don't run pg commands in shells ([0987bec](https://github.com/leinelissen/embedded-postgres/commit/0987becc7dfd46d66e9102f3479d96611be441f5))
+* enable binary downloads on win32 ([2493d29](https://github.com/leinelissen/embedded-postgres/commit/2493d2995e0a37d3cc0917c45d84a0ad173515aa))
+* only remove native.tar when it exists ([a70556e](https://github.com/leinelissen/embedded-postgres/commit/a70556ed56e47873fe6697fb5c7c7e2a8c14be8c))
+* refactor download scripts to ESM as well ([557bff7](https://github.com/leinelissen/embedded-postgres/commit/557bff7ac25cdb210530d2d6b08002aa8af4c163))
+* replace "with" syntax for "assert" syntax for broader node compatibility ([bf98824](https://github.com/leinelissen/embedded-postgres/commit/bf9882407d176976898ed5113f721586a8a0a681))
+* run tar in one go on non-windows systems ([eac6820](https://github.com/leinelissen/embedded-postgres/commit/eac6820a26bca54fa54e8113c403a46e2d012b99))
+
+
+### Features
+
+* refactor to ESM ([c5299bb](https://github.com/leinelissen/embedded-postgres/commit/c5299bb204cb2c1c19ee76aed8c90583ad3dfd16))
+
+
+
+## [16.1.1-beta.9](https://github.com/leinelissen/embedded-postgres/compare/v15.5.1-beta.9...v16.1.1-beta.9) (2023-12-07)
+
+
+
+## [15.5.1-beta.9](https://github.com/leinelissen/embedded-postgres/compare/v14.10.1-beta.9...v15.5.1-beta.9) (2023-12-07)
+
+
+
+## [14.10.1-beta.9](https://github.com/leinelissen/embedded-postgres/compare/v13.13.1-beta.9...v14.10.1-beta.9) (2023-12-07)
+
+
+
+## [13.13.1-beta.9](https://github.com/leinelissen/embedded-postgres/compare/v12.17.1-beta.9...v13.13.1-beta.9) (2023-12-07)
+
+
+
+## [12.17.1-beta.9](https://github.com/leinelissen/embedded-postgres/compare/v11.22.1-beta.9...v12.17.1-beta.9) (2023-12-07)
+
+
+
+## [11.22.1-beta.9](https://github.com/leinelissen/embedded-postgres/compare/v15.4.0-beta.9...v11.22.1-beta.9) (2023-12-07)
+
+
+
+# [15.4.0-beta.9](https://github.com/leinelissen/embedded-postgres/compare/v14.9.0-beta.9...v15.4.0-beta.9) (2023-08-25)
+
+
+
+# [14.9.0-beta.9](https://github.com/leinelissen/embedded-postgres/compare/v13.12.0-beta.9...v14.9.0-beta.9) (2023-08-25)
+
+
+
+# [13.12.0-beta.9](https://github.com/leinelissen/embedded-postgres/compare/v12.16.0-beta.9...v13.12.0-beta.9) (2023-08-25)
+
+
+
+# [12.16.0-beta.9](https://github.com/leinelissen/embedded-postgres/compare/v11.21.0-beta.9...v12.16.0-beta.9) (2023-08-25)
+
+
+
+# [11.21.0-beta.9](https://github.com/leinelissen/embedded-postgres/compare/v15.3.0-beta.9...v11.21.0-beta.9) (2023-08-25)
 
 
 
