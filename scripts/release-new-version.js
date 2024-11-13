@@ -45,6 +45,13 @@ async function main() {
             ignore,
         });
 
+        // Compile the scripts in all repositories
+        await lernaRun({
+            cwd: process.cwd(),
+            script: 'build',
+            ignore,
+        });
+
         // Release the newly downloaded releases
         await lernaVersion({
             cwd: process.cwd(),
