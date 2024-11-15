@@ -129,9 +129,9 @@ command to install all packages:
 npm install --force
 ```
 
-[!NOTE]
-You must include `--force` or else NPM will refuse to install the
-dependencies for all packages, including those not for the current architecture.
+> [!NOTE]
+> You must include `--force` or else NPM will refuse to install the
+> dependencies for all packages, including those not for the current architecture.
 
 Then, you must pre-compile all Typescript using the following command:
 ```
