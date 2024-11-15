@@ -145,7 +145,12 @@ npm run download
 ```
 
 Lastly, you can hop over to `packages/embedded-postgres` and do some development
-there. You can force automatic recompliation of the Typescript files by running:
+there:
+```
+cd packages/embedded-postgres
+```
+
+You can force automatic recompliation of the Typescript files by running:
 ```
 npm start
 ```
@@ -153,7 +158,7 @@ npm start
 Don't forget to add and run tests when you are developing new functionality. Add
 them to `tests/index.test.ts`, and run the tests by running:
 ```
-npm teest
+npm test
 ```
 
 <br />
