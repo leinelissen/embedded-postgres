@@ -1,6 +1,6 @@
 {
   "name": "@embedded-postgres/linux-arm",
-  "version": "15.10.0-beta.14",
+  "version": "16.6.0-beta.14",
   "description": "",
   "exports": "./dist/index.js",
   "type": "module",
@@ -20,8 +20,8 @@
     "arm"
   ],
   "devDependencies": {
-    "@embedded-postgres/downloader": "^15.10.0-beta.14",
-    "@embedded-postgres/symlink-reader": "^15.10.0-beta.14"
+    "@embedded-postgres/downloader": "^16.6.0-beta.14",
+    "@embedded-postgres/symlink-reader": "^16.6.0-beta.14"
   },
   "publishConfig": {
     "access": "public"
