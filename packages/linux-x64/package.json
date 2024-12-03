@@ -21,7 +21,7 @@
     "linux"
   ],
   "cpu": [
-    "ia32"
+    "x64"
   ],
   "devDependencies": {
     "@embedded-postgres/downloader": "^17.2.0-beta.14",
