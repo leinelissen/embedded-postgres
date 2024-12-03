@@ -14,6 +14,14 @@ const bin = getBinaries();
 const { Client } = pg;
 
 /**
+ * We have to specify the LC_MESSAGES locale because we rely on inspecting the
+ * output of the `initdb` command to see if Postgres is ready. As we're looking
+ * for a particular string, we need to force that string into the right locale.
+ * @see https://github.com/leinelissen/embedded-postgres/issues/15
+ */
+const LC_MESSAGES_LOCALE = 'en_US.UTF-8';
+
+/**
  * Previosuly, options were specified in snake_case rather than camelCase. Old
  * options are still translated to new variants.
  */
@@ -136,6 +144,7 @@ class EmbeddedPostgres {
                 `--auth=${this.options.authMethod}`,
                 `--username=${this.options.user}`,
                 `--pwfile=${passwordFile}`,
+                `--lc-messages=${LC_MESSAGES_LOCALE}`,
                 ...this.options.initdbFlags,
             ], { stdio: 'inherit', ...permissionIds,  });
 
@@ -177,7 +186,7 @@ class EmbeddedPostgres {
                 '-p',
                 this.options.port.toString(),
                 ...this.options.postgresFlags,
-            ], { ...permissionIds });
+            ], { ...permissionIds, env: { LC_MESSAGES: LC_MESSAGES_LOCALE } });
 
             // Connect to stderr, as that is where the messages get sent
             this.process.stderr?.on('data', (chunk: Buffer) => {
