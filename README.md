@@ -1,11 +1,13 @@
-![Embedded Postgres](./docs/images/embedded-postgres-header.png)
+![Embedded Postgres](./docs/images/embedded-postgres-header.svg)
 
 <div align="center">
 
 ![npm](https://img.shields.io/npm/v/embedded-postgres)
 ![npm type definitions](https://img.shields.io/npm/types/embedded-postgres)
-![npm](https://img.shields.io/npm/dm/embedded-postgres)
+![npm](https://img.shields.io/npm/dy/embedded-postgres)
 ![NPM](https://img.shields.io/npm/l/embedded-postgres)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/leinelissen/embedded-postgres/test.yml)
+
 
 </div>
 
