@@ -27,7 +27,7 @@ afterEach(async () => {
     await pg?.stop();
     
     // Remove all cluster files
-    await fs.rm(path.join(DB_PATH), { recursive: true, force: true });
+    // await fs.rm(path.join(DB_PATH), { recursive: true, force: true });
 });
 
 it('should be able to initialise a cluster', async () => {

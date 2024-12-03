@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -22,6 +22,13 @@ jobs:
       - run: npm run lint
       - run: npm run download
       - name: Run test
+        if: matrix.os != 'windows-latest'
+        run: |
+          cd packages/embedded-postgres
+          npm test
+      - name: Run test (NL locale)
+        env:
+          LC_ALL: nl_NL.utf8
         if: matrix.os != 'windows-latest'
         run: |
           cd packages/embedded-postgres

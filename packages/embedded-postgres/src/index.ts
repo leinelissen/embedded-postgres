@@ -146,7 +146,14 @@ class EmbeddedPostgres {
                 `--pwfile=${passwordFile}`,
                 `--lc-messages=${LC_MESSAGES_LOCALE}`,
                 ...this.options.initdbFlags,
-            ], { stdio: 'inherit', ...permissionIds,  });
+            ], { ...permissionIds, env: { LC_MESSAGES: LC_MESSAGES_LOCALE } });
+
+            // Connect to stderr, as that is where the messages get sent
+            process.stdout?.on('data', (chunk: Buffer) => {
+                // Parse the data as a string and log it
+                const message = chunk.toString('utf-8');
+                this.options.onLog(message); 
+            });
 
             process.on('exit', (code) => {
                 if (code === 0) {
