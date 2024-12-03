@@ -12,7 +12,7 @@
     "start": "lerna run start --parallel",
     "build": "lerna run build",
     "download": "lerna run download --parallel",
-    "download-all": "lerna run download --parallel -- --all",
+    "download-all": "lerna run download --parallel -- -- --all",
     "docs": "lerna run docs --parallel",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "test": "lerna run test"

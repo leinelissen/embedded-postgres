@@ -3,9 +3,17 @@ import fs from 'fs/promises';
 import { spawnSync } from 'child_process';
 import { coerce } from 'semver';
 import os from 'os';
+import { parseArgs } from 'util';
 
 type AcceptedArchs = 'amd64' | 'arm64v8' | 'arm32v6' | 'arm32v7' | 'i386' | 'ppc64le';
 type AcceptedPlatforms = 'darwin' | 'linux' | 'windows';
+
+interface PackageJSON {
+    name?: string;
+    version?: string;
+    cpu?: string;
+    os?: string;
+}
 
 // Specify the command which should be used to check whether a command is 
 // available on the current system
@@ -70,10 +78,32 @@ function hasBinary(bin: string | string[]): boolean {
  * @param arch The platform architecture for which the binary should be downloaded
  * @param platform The platform for which the binary should be downloaded
  */
-export async function downloadBinaries(version: string, arch: string, platform: string) {
+export async function downloadBinaries(
+    argv: string[],
+    { cpu: arch, os: platform, version: defaultVersion }: PackageJSON
+) {
+    // GUARD: Check that the incoming values are correct
+    if (!argv.length || !arch || !platform) {
+        console.error('Received unexpected input', { argv, arch, platform });
+        throw new Error('Input data for downloader are invalid');
+    }
+
+    // Parse the incoming arguments
+    const { values, positionals } = parseArgs({ 
+        args: argv, 
+        options: {
+            all: {
+                type: 'boolean',
+                description: 'Download all binaries, even if they don\'t match the current system',
+                default: false,
+            },
+        },
+        allowPositionals: true,
+    });
+
     // GUARD: We'll only download mismatching binaries with the current system
     // arch and platform if the "--all" flag is supplied
-    if (!process.argv.includes('--all') 
+    if (!values.all 
         && (arch.toString() !== process.arch
         || platform.toString() !== process.platform)
     ) {
@@ -84,7 +114,7 @@ export async function downloadBinaries(version: string, arch: string, platform: 
     // Form URL from parameters
     const mappedArch = mapArchitecture(arch);
     const mappedPlatform = mapPlatform(platform);
-    const mappedVersion = coerce(version);
+    const mappedVersion = coerce(positionals[2] || defaultVersion);
     const url = `https://repo1.maven.org/maven2/io/zonky/test/postgres/embedded-postgres-binaries-${mappedPlatform}-${mappedArch}/${mappedVersion}/embedded-postgres-binaries-${mappedPlatform}-${mappedArch}-${mappedVersion}.jar`;
 
     // Download file
