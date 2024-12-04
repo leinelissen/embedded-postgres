@@ -37,18 +37,18 @@ async function main() {
         // Determine which packages should be ignored
         const ignore = major < 14 ? '@embedded-postgres/darwin-arm64' : '';
 
+        // Compile the scripts in all repositories
+        await lernaRun({
+            cwd: process.cwd(),
+            script: 'build',
+            ignore,
+        });
+
         // Download the new versions in all repositories
         await lernaRun({
             cwd: process.cwd(),
             script: 'download',
             '--': [pgVersion, '--', '--all'],
-            ignore,
-        });
-
-        // Compile the scripts in all repositories
-        await lernaRun({
-            cwd: process.cwd(),
-            script: 'build',
             ignore,
         });
 
