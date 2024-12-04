@@ -1,5 +1,5 @@
 ![Embedded
-Postgres](https://github.com/leinelissen/embedded-postgres/raw/master/docs/images/embedded-postgres-header.svg)
+Postgres](https://github.com/leinelissen/embedded-postgres/raw/main/docs/images/embedded-postgres-header.svg)
 
 <div align="center">
 
@@ -185,7 +185,7 @@ binaries are made available under the Apache License 2.0, whereas the specific
 code in this package is made available under the MIT license.
 
 <a href="https://bmd.studio">
-    <img src="https://github.com/leinelissen/embedded-postgres/raw/master/docs/images/logo-bmd.svg" alt="BMD Studio" width="150" height="150" />
+    <img src="https://github.com/leinelissen/embedded-postgres/raw/main/docs/images/logo-bmd.svg" alt="BMD Studio" width="150" height="150" />
 </a>
 
 <br />
