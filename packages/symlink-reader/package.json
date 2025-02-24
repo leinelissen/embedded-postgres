@@ -1,6 +1,6 @@
 {
   "name": "@embedded-postgres/symlink-reader",
-  "version": "16.8.0-beta.15",
+  "version": "17.4.0-beta.15",
   "description": "A helper to detect symlinks",
   "exports": "./dist/index.js",
   "type": "module",
