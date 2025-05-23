@@ -178,13 +178,20 @@ system for usage by your script.
 
 ## Credits and Licensing
 Embedded Postgres was created by Lei Nelissen for [BMD
-Studio](https://bmd.studio). It is based on [zonky's
-embedded-postgres-binaries](https://github.com/zonkyio/embedded-postgres). The
+Studio](https://bmd.studio). It is currently maintained by [Studio Falkland](https://falkland.studio) The package is based on [zonky's
+embedded-postgres-binaries](https://github.com/zonkyio/embedded-postgres). 
+
+The
 binaries are made available under the Apache License 2.0, whereas the specific
 code in this package is made available under the MIT license.
 
+<p float="left">
 <a href="https://bmd.studio">
-    <img src="./docs/images/logo-bmd.svg" alt="BMD Studio" width="150" height="150" />
+    <img src="./docs/images/logo-bmd.svg" alt="BMD Studio" height="60" />
 </a>
+<a href="https://falkland.studio">
+    <img src="./docs/images/logo-falkland.svg" alt="Studio Falkland" height="60" />
+</a>
+</p>
 
 <br />
