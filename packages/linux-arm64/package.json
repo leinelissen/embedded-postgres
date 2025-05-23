@@ -1,6 +1,6 @@
 {
   "name": "@embedded-postgres/linux-arm64",
-  "version": "14.18.0-beta.15",
+  "version": "15.13.0-beta.15",
   "description": "A package containing the Postgres binaries for a particular architecture and operating system. See the embedded-postgres package.",
   "exports": "./dist/index.js",
   "type": "module",
@@ -24,8 +24,8 @@
     "arm64"
   ],
   "devDependencies": {
-    "@embedded-postgres/downloader": "^14.18.0-beta.15",
-    "@embedded-postgres/symlink-reader": "^14.18.0-beta.15"
+    "@embedded-postgres/downloader": "^15.13.0-beta.15",
+    "@embedded-postgres/symlink-reader": "^15.13.0-beta.15"
   },
   "publishConfig": {
     "access": "public"
