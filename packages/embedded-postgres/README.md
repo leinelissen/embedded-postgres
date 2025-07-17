@@ -125,7 +125,7 @@ development, you might need some extra pointers
 
 ### Development
 In order to get yourself situated for development, you will need to the
-reopistory up and running. In order to make this work, start with a relatively
+repository up and running. In order to make this work, start with a relatively
 recent install of NodeJS (at least v18, v20+ recommended). You can then run this
 command to install all packages:
 ```
