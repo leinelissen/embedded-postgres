@@ -1,6 +1,6 @@
 {
   "name": "@embedded-postgres/linux-ia32",
-  "version": "13.22.0-beta.15",
+  "version": "14.19.0-beta.15",
   "description": "A package containing the Postgres binaries for a particular architecture and operating system. See the embedded-postgres package.",
   "exports": "./dist/index.js",
   "type": "module",
@@ -24,8 +24,8 @@
     "ia32"
   ],
   "devDependencies": {
-    "@embedded-postgres/downloader": "^13.22.0-beta.15",
-    "@embedded-postgres/symlink-reader": "^13.22.0-beta.15"
+    "@embedded-postgres/downloader": "^14.19.0-beta.15",
+    "@embedded-postgres/symlink-reader": "^14.19.0-beta.15"
   },
   "publishConfig": {
     "access": "public"
