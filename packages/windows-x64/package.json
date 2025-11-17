@@ -1,6 +1,6 @@
 {
   "name": "@embedded-postgres/windows-x64",
-  "version": "16.11.0-beta.15",
+  "version": "17.7.0-beta.15",
   "description": "A package containing the Postgres binaries for a particular architecture and operating system. See the embedded-postgres package.",
   "exports": "./dist/index.js",
   "type": "module",
@@ -24,8 +24,8 @@
     "x64"
   ],
   "devDependencies": {
-    "@embedded-postgres/downloader": "^16.11.0-beta.15",
-    "@embedded-postgres/symlink-reader": "^16.11.0-beta.15"
+    "@embedded-postgres/downloader": "^17.7.0-beta.15",
+    "@embedded-postgres/symlink-reader": "^17.7.0-beta.15"
   },
   "publishConfig": {
     "access": "public"
