@@ -46,14 +46,16 @@ const defaults: PostgresOptions = {
 };
 
 // Fixes the mode of files that are supposed to be executable
-const ensureFileIsExecutable = async (filePath: string) => {
-    // Check if mode needs fixing to prevent extraneous operation. This is
-    // especially useful when the binaries are in a read-only file system, as a
-    // call to chmod would cause a crash.
+//                        r-xr-xr-x
+const BIN_PERMISSIONS = 0b101101101;
+const ensureBinIsExecutable = async (filePath: string) => {
+    // Only fix the file's mode if it's missing a permission. This is useful
+    // when the binaries are in a read-only file system, as a call to chmod
+    // (even unnecessary) would cause a crash.
     const stat = await fs.stat(filePath);
 
-    if ((stat.mode & 0o777) !== 0o755) {
-        await fs.chmod(filePath, '755');
+    if ((stat.mode & BIN_PERMISSIONS) !== BIN_PERMISSIONS) {
+        await fs.chmod(filePath, stat.mode | BIN_PERMISSIONS);
     }
 };
 
@@ -146,8 +148,8 @@ class EmbeddedPostgres {
         await fs.writeFile(passwordFile, this.options.password + '\n');
 
         // Make the files executable, in case they are not
-        ensureFileIsExecutable(postgres);
-        ensureFileIsExecutable(initdb);
+        ensureBinIsExecutable(postgres);
+        ensureBinIsExecutable(initdb);
 
         // Initialize the database
         await new Promise<void>((resolve, reject) => {
@@ -195,7 +197,7 @@ class EmbeddedPostgres {
             });
 
         // Make the file executable, in case it is not
-        ensureFileIsExecutable(postgres);
+        ensureBinIsExecutable(postgres);
 
         await new Promise<void>((resolve, reject) => {
             // Spawn a postgres server
