@@ -45,6 +45,20 @@ const defaults: PostgresOptions = {
     onError: console.error,
 };
 
+// Fixes the mode of files that are supposed to be executable
+//                        r-xr-xr-x
+const BIN_PERMISSIONS = 0b101101101;
+const ensureBinIsExecutable = async (filePath: string) => {
+    // Only fix the file's mode if it's missing a permission. This is useful
+    // when the binaries are in a read-only file system, as a call to chmod
+    // (even unnecessary) would cause a crash.
+    const stat = await fs.stat(filePath);
+
+    if ((stat.mode & BIN_PERMISSIONS) !== BIN_PERMISSIONS) {
+        await fs.chmod(filePath, stat.mode | BIN_PERMISSIONS);
+    }
+};
+
 /**
  * This will track instances of all current initialised clusters. We need this
  * because we want to be able to shutdown any clusters when the script is exited.
@@ -133,9 +147,9 @@ class EmbeddedPostgres {
         const passwordFile = path.resolve(tmpdir(), `pg-password-${randomId}`);
         await fs.writeFile(passwordFile, this.options.password + '\n');
 
-        // Greedily make the file executable, in case it is not
-        await fs.chmod(postgres, '755');
-        await fs.chmod(initdb, '755');
+        // Make the files executable, in case they are not
+        ensureBinIsExecutable(postgres);
+        ensureBinIsExecutable(initdb);
 
         // Initialize the database
         await new Promise<void>((resolve, reject) => {
@@ -182,8 +196,8 @@ class EmbeddedPostgres {
                 throw new Error('Postgres cannot run as a root user. embedded-postgres could not find a postgres user to run as instead. Consider using the `createPostgresUser` option.'); 
             });
 
-        // Greedily make the file executable, in case it is not
-        await fs.chmod(postgres, '755');
+        // Make the file executable, in case it is not
+        ensureBinIsExecutable(postgres);
 
         await new Promise<void>((resolve, reject) => {
             // Spawn a postgres server
