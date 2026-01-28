@@ -135,3 +135,28 @@ it('should automatically remove files when persistent is set to false', async ()
         .rejects
         .toThrowError();
 });
+
+it('should ensure binary files have correct permissions', async () => {
+    // r-xr-xr-x permissions (365 in decimal, 0o555 in octal)
+    const expectedPermissions = 0b101101101;
+    
+    // Initialize postgres (which will call ensureBinIsExecutable on binaries)
+    pg = new EmbeddedPostgres(DEFAULT_SETTINGS);
+    await pg.initialise();
+    
+    // Check postgres binary has correct permissions
+    const { postgres } = await import('../src/binary.js').then(m => m.default());
+    const postgresStat = await fs.stat(postgres);
+    
+    // Should have all execute bits set
+    expect((postgresStat.mode & expectedPermissions)).toBe(expectedPermissions);
+    
+    // Re-run initialization to verify permissions remain correct
+    await fs.rm(path.join(DB_PATH), { recursive: true, force: true });
+    pg = new EmbeddedPostgres(DEFAULT_SETTINGS);
+    await pg.initialise();
+    
+    const afterFixStat = await fs.stat(postgres);
+    // Permissions should still be correct
+    expect((afterFixStat.mode & expectedPermissions)).toBe(expectedPermissions);
+});
