@@ -23,6 +23,13 @@ Postgres](https://github.com/leinelissen/embedded-postgres/raw/main/docs/images/
 npm i embedded-postgres
 ```
 
+> Embedded Postgres requires post-install scripts to function. If you have those
+> disabled (such as when using PNPM), please approve build scripts manually (in
+> this case by running `pnpm approve-builds`)
+
+We require a post-install script to generate symlinks that Postgres requires for
+operation. This is necessary since [NPM doesn't supports symlinks in their tarballs](https://github.com/npm/cli/issues/6746).
+
 <br />
 
 ## Usage
