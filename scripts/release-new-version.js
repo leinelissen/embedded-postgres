@@ -38,7 +38,6 @@ async function main() {
       cwd: process.cwd(),
       script: "download",
       "--": [pgVersion, "--", "--all"],
-      ignore,
     });
 
     // Release the newly downloaded releases
