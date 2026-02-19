@@ -5,11 +5,11 @@ on: [push]
 
 jobs:
   test:
-    name: 'Test'
+    name: "Test"
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
+        os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -33,6 +33,3 @@ jobs:
         run: |
           cd packages/embedded-postgres
           npm test
-
-
-
