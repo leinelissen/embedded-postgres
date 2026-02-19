@@ -46,7 +46,6 @@ async function main() {
       bump: version,
       yes: true,
       forcePublish: true,
-      ignore,
     });
 
     // Publish the packages
@@ -54,7 +53,6 @@ async function main() {
       cwd: process.cwd(),
       bump: "from-package",
       yes: true,
-      ignore,
     });
 
     // Log success
