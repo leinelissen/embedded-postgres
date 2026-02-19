@@ -1,6 +1,6 @@
 {
   "name": "@embedded-postgres/downloader",
-  "version": "15.16.0-beta.16",
+  "version": "16.12.0-beta.16",
   "description": "A helper to download PostgresQL binaries",
   "exports": "./dist/index.js",
   "type": "module",
