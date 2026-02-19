@@ -1,6 +1,6 @@
 {
   "name": "@embedded-postgres/darwin-arm64",
-  "version": "17.8.0-beta.16",
+  "version": "18.2.0-beta.16",
   "description": "A package containing the Postgres binaries for a particular architecture and operating system. See the embedded-postgres package.",
   "exports": "./dist/index.js",
   "type": "module",
@@ -24,8 +24,8 @@
     "arm64"
   ],
   "devDependencies": {
-    "@embedded-postgres/downloader": "^17.8.0-beta.16",
-    "@embedded-postgres/symlink-reader": "^17.8.0-beta.16"
+    "@embedded-postgres/downloader": "^18.2.0-beta.16",
+    "@embedded-postgres/symlink-reader": "^18.2.0-beta.16"
   },
   "publishConfig": {
     "access": "public"
