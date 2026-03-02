@@ -6,7 +6,7 @@ import lernaPublish from "@lerna/publish";
  * Define a static set of versions that are supported. This means that only new
  * binaries for thesse versions will be released.
  */
-const supportedVersions = ["14.21.0", "15.16.0", "16.12.0", "17.8.0", "18.2.0"];
+const supportedVersions = ["14.22.0", "15.17.0", "16.13.0", "17.9.0", "18.3.0"];
 
 /**
  * Accept a particular affix that should appended to the version number. The
