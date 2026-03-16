@@ -2,7 +2,7 @@ import path from 'path';
 import crypto from 'crypto';
 import fs from 'fs/promises';
 import { platform, tmpdir, userInfo } from 'os';
-import { ChildProcess, spawn, exec } from 'child_process';
+import { ChildProcess, spawn, exec, execSync } from 'child_process';
 
 import pg from 'pg';
 import AsyncExitHook from 'async-exit-hook';
@@ -19,7 +19,18 @@ const { Client } = pg;
  * for a particular string, we need to force that string into the right locale.
  * @see https://github.com/leinelissen/embedded-postgres/issues/15
  */
-const LC_MESSAGES_LOCALE = 'en_US.UTF-8';
+function getBestLocale(): string {
+    try {
+        const availableLocales = execSync('locale -a', { encoding: 'utf-8' });
+        if (availableLocales.includes('en_US.UTF-8')) return 'en_US.UTF-8';
+        if (availableLocales.includes('C.UTF-8')) return 'C.UTF-8';
+        if (availableLocales.includes('en_US.utf8')) return 'en_US.utf8';
+    } catch {
+        // Fallback to POSIX C locale
+    }
+    return 'C';
+}
+const LC_MESSAGES_LOCALE = getBestLocale();
 
 /**
  * Previosuly, options were specified in snake_case rather than camelCase. Old
@@ -163,20 +174,24 @@ class EmbeddedPostgres {
             ], { ...permissionIds, env: { LC_MESSAGES: LC_MESSAGES_LOCALE } });
 
             // Connect to stderr, as that is where the messages get sent
+            let stderrOutput = '';
             process.stdout?.on('data', (chunk: Buffer) => {
-                // Parse the data as a string and log it
                 const message = chunk.toString('utf-8');
-                this.options.onLog(message); 
+                this.options.onLog(message);
+            });
+
+            process.stderr?.on('data', (chunk: Buffer) => {
+                stderrOutput += chunk.toString('utf-8');
+                this.options.onLog(`[STDERR] ${chunk.toString('utf-8')}`);
             });
 
             process.on('exit', (code) => {
                 if (code === 0) {
                     resolve();
                 } else {
-                    reject(`Postgres init script exited with code ${code}. Please check the logs for extra info. The data directory might already exist.`);
+                    reject(`Postgres init script exited with code ${code}. ERROR OUTPUT: ${stderrOutput}`);
                 }
-            });
-        });
+            });        });
 
         // Clean up the file
         await fs.unlink(passwordFile);
