@@ -1,4 +1,79 @@
-# [1.0.0](https://github.com/leinelissen/embedded-postgres/compare/v18.1.0-beta.16...v1.0.0) (2026-01-28)
+# [1.0.0](https://github.com/leinelissen/embedded-postgres/compare/v18.3.0-beta.17...v1.0.0) (2026-04-17)
+
+
+
+# [18.3.0-beta.17](https://github.com/leinelissen/embedded-postgres/compare/v17.9.0-beta.17...v18.3.0-beta.17) (2026-04-17)
+
+
+
+# [17.9.0-beta.17](https://github.com/leinelissen/embedded-postgres/compare/v16.13.0-beta.17...v17.9.0-beta.17) (2026-04-17)
+
+
+
+# [16.13.0-beta.17](https://github.com/leinelissen/embedded-postgres/compare/v15.17.0-beta.17...v16.13.0-beta.17) (2026-04-17)
+
+
+
+# [15.17.0-beta.17](https://github.com/leinelissen/embedded-postgres/compare/v14.22.0-beta.17...v15.17.0-beta.17) (2026-04-17)
+
+
+
+# [14.22.0-beta.17](https://github.com/leinelissen/embedded-postgres/compare/v18.3.0-beta.16...v14.22.0-beta.17) (2026-04-17)
+
+
+### Bug Fixes
+
+* generate nl locale on ubuntu ([1203408](https://github.com/leinelissen/embedded-postgres/commit/12034083e42aeb8b7bb4467ba77ccbee321aa736))
+* harden locale detection and initdb process handling ([8f1b46d](https://github.com/leinelissen/embedded-postgres/commit/8f1b46db0aab916621e45d4ba1eb7d18688a33e3))
+* implement dynamic locale detection and enhance error logging ([106639b](https://github.com/leinelissen/embedded-postgres/commit/106639b3eab06a1f0c0f1344f0d6e3c7f66ba958))
+* test with valid non-english locale ([182b463](https://github.com/leinelissen/embedded-postgres/commit/182b4631ae045c41baa571bce8a9a3e44329e1f9))
+
+
+
+# [18.3.0-beta.16](https://github.com/leinelissen/embedded-postgres/compare/v17.9.0-beta.16...v18.3.0-beta.16) (2026-03-03)
+
+
+
+# [17.9.0-beta.16](https://github.com/leinelissen/embedded-postgres/compare/v16.13.0-beta.16...v17.9.0-beta.16) (2026-03-03)
+
+
+
+# [16.13.0-beta.16](https://github.com/leinelissen/embedded-postgres/compare/v15.17.0-beta.16...v16.13.0-beta.16) (2026-03-03)
+
+
+
+# [15.17.0-beta.16](https://github.com/leinelissen/embedded-postgres/compare/v14.22.0-beta.16...v15.17.0-beta.16) (2026-03-03)
+
+
+
+# [14.22.0-beta.16](https://github.com/leinelissen/embedded-postgres/compare/v18.2.0-beta.16...v14.22.0-beta.16) (2026-03-03)
+
+
+
+# [18.2.0-beta.16](https://github.com/leinelissen/embedded-postgres/compare/v17.8.0-beta.16...v18.2.0-beta.16) (2026-02-19)
+
+
+
+# [17.8.0-beta.16](https://github.com/leinelissen/embedded-postgres/compare/v16.12.0-beta.16...v17.8.0-beta.16) (2026-02-19)
+
+
+
+# [16.12.0-beta.16](https://github.com/leinelissen/embedded-postgres/compare/v15.16.0-beta.16...v16.12.0-beta.16) (2026-02-19)
+
+
+
+# [15.16.0-beta.16](https://github.com/leinelissen/embedded-postgres/compare/v14.21.0-beta.16...v15.16.0-beta.16) (2026-02-19)
+
+
+
+# [14.21.0-beta.16](https://github.com/leinelissen/embedded-postgres/compare/v18.1.0-beta.16...v14.21.0-beta.16) (2026-02-19)
+
+
+### Bug Fixes
+
+* redundant ignore ([9e066b5](https://github.com/leinelissen/embedded-postgres/commit/9e066b543def0546af6ae6e1b5b21f2fd2501eaf))
+* remove more redundant ignores ([c2561eb](https://github.com/leinelissen/embedded-postgres/commit/c2561eb169d7d0140fd016678aa8f34a2c96f847))
+* stop running CI on legacy macos ([b11fbfa](https://github.com/leinelissen/embedded-postgres/commit/b11fbfacc0f157d3c4e1fe33e3a4acfc21a6f5b2))
 
 
 
