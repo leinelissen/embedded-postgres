@@ -26,9 +26,14 @@ jobs:
         run: |
           cd packages/embedded-postgres
           npm test
+      - name: Generate NL locale
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo locale-gen nl_NL.UTF-8
+          sudo update-locale
       - name: Run test (NL locale)
         env:
-          LC_ALL: nl_NL.utf8
+          LC_ALL: nl_NL.UTF-8
         if: matrix.os != 'windows-latest'
         run: |
           cd packages/embedded-postgres
