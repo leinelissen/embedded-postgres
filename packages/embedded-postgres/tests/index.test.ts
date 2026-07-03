@@ -7,10 +7,17 @@ import { beforeEach } from 'node:test';
 
 const DB_NAME = 'embedded-pg-test-db';
 const DB_PATH = path.join(__dirname, 'data', 'db');
+const DETACHED_DB_PATH = path.join(__dirname, 'data', 'detached-db');
 
 const DEFAULT_SETTINGS: Partial<PostgresOptions> = {
     port: 5433,
     databaseDir: DB_PATH,
+};
+
+const DETACHED_SETTINGS: Partial<PostgresOptions> = {
+    port: 5434,
+    databaseDir: DETACHED_DB_PATH,
+    lifecycleMode: 'detached',
 };
 
 let pg: EmbeddedPostgres | undefined;
@@ -27,7 +34,8 @@ afterEach(async () => {
     await pg?.stop();
     
     // Remove all cluster files
-    await fs.rm(path.join(DB_PATH), { recursive: true, force: true });
+    await fs.rm(path.join(DB_PATH), { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
+    await fs.rm(path.join(DETACHED_DB_PATH), { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
 });
 
 it('should be able to initialise a cluster', async () => {
@@ -47,6 +55,23 @@ it('should be able to start and stop a cluster', async () => {
     await pg.initialise();
 
     await pg.start();
+});
+
+it('should start and stop a detached cluster explicitly', async () => {
+    pg = new EmbeddedPostgres(DETACHED_SETTINGS);
+    await pg.initialise();
+    await pg.start();
+
+    const client = pg.getPgClient();
+    await client.connect();
+    try {
+        const result = await client.query('SELECT 1 AS value;');
+        expect(result.rows).toEqual([{ value: 1 }]);
+    } finally {
+        await client.end();
+    }
+
+    await expect(pg.stop()).resolves.toBeUndefined();
 });
 
 // it('should throw an error if the cluster is attempted to be started without initialising', async () => {

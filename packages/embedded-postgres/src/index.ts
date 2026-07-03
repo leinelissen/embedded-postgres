@@ -13,6 +13,9 @@ import { PostgresOptions } from './types.js';
 const bin = getBinaries();
 const { Client } = pg;
 
+const POSTGRES_READY_POLL_INTERVAL_MS = 250;
+const POSTGRES_READY_TIMEOUT_MS = 300_000;
+
 /**
  * We have to specify the LC_MESSAGES locale because we rely on inspecting the
  * output of the `initdb` command to see if Postgres is ready. As we're looking
@@ -57,6 +60,7 @@ const defaults: PostgresOptions = {
     password: 'password',
     authMethod: 'password',
     persistent: true,
+    lifecycleMode: 'managed',
     initdbFlags: [],
     postgresFlags: [],
     createPostgresUser: false,
@@ -78,6 +82,18 @@ const ensureBinIsExecutable = async (filePath: string) => {
     }
 };
 
+
+const quoteWindowsCommandLineArgument = (value: string) => {
+    const stringValue = String(value);
+    if (!/[ \t\n\v"]/.test(stringValue)) {
+        return stringValue;
+    }
+
+    return `"${stringValue
+        .replace(/(\\*)"/g, '$1$1\\"')
+        .replace(/(\\+)$/g, '$1$1')}"`;
+};
+
 /**
  * This will track instances of all current initialised clusters. We need this
  * because we want to be able to shutdown any clusters when the script is exited.
@@ -93,6 +109,8 @@ class EmbeddedPostgres {
     protected options: PostgresOptions;
 
     private process?: ChildProcess;
+
+    private detachedPostmasterPid?: number;
 
     private isRootUser: boolean;
 
@@ -110,7 +128,9 @@ class EmbeddedPostgres {
         // Assign default options to options object
         this.options = Object.assign({}, defaults, legacyOptions, options);
 
-        instances.add(this);
+        if (this.options.lifecycleMode === 'managed') {
+            instances.add(this);
+        }
 
         this.isRootUser = userInfo().uid === 0;
     }
@@ -217,9 +237,10 @@ class EmbeddedPostgres {
     }
 
     /**
-     * Start the Postgres cluster with the given configuration. The cluster is
-     * started as a seperate process, unmanaged by NodeJS. It is automatically
-     * shut down when the script exits.
+     * Start the Postgres cluster with the given configuration. Managed clusters
+     * keep the historical parent-process lifecycle and are automatically shut
+     * down when the script exits. Detached clusters are isolated from the parent
+     * lifecycle and must be stopped explicitly.
      */
     async start() {
         const { postgres } = await bin;
@@ -233,6 +254,16 @@ class EmbeddedPostgres {
 
         // Make the file executable, in case it is not
         ensureBinIsExecutable(postgres);
+
+        if (this.options.lifecycleMode === 'detached') {
+            if (platform() === 'win32') {
+                await this.startDetachedWindows(postgres, locale);
+            } else {
+                await this.startDetachedPosix(postgres, locale, permissionIds);
+            }
+            await this.waitUntilReady();
+            return;
+        }
 
         await new Promise<void>((resolve, reject) => {
             // Spawn a postgres server
@@ -269,6 +300,165 @@ class EmbeddedPostgres {
         });
     }
 
+    private async startDetachedPosix(
+        postgres: string,
+        locale: string,
+        permissionIds: Record<string, never> | { uid: number; gid: number }
+    ) {
+        await new Promise<void>((resolve, reject) => {
+            this.process = spawn(postgres, [
+                '-D',
+                this.options.databaseDir,
+                '-p',
+                this.options.port.toString(),
+                ...this.options.postgresFlags,
+            ], {
+                ...permissionIds,
+                detached: true,
+                env: {
+                    ...process.env,
+                    LC_MESSAGES: locale,
+                },
+            });
+
+            this.process.stderr?.on('data', (chunk: Buffer) => {
+                this.options.onLog(chunk.toString('utf-8'));
+            });
+
+            this.process.once('error', reject);
+            this.process.once('spawn', resolve);
+
+            this.process.unref();
+            (this.process.stdin as { unref?: () => void } | null)?.unref?.();
+            (this.process.stdout as { unref?: () => void } | null)?.unref?.();
+            (this.process.stderr as { unref?: () => void } | null)?.unref?.();
+        });
+    }
+
+    private async startDetachedWindows(postgres: string, locale: string) {
+        const commandLine = [
+            postgres,
+            '-D',
+            this.options.databaseDir,
+            '-p',
+            this.options.port.toString(),
+            ...this.options.postgresFlags,
+        ].map(quoteWindowsCommandLineArgument).join(' ');
+
+        const launcher = [
+            '$source = @\'',
+            'using System;',
+            'using System.Text;',
+            'using System.Runtime.InteropServices;',
+            'public static class EmbeddedPostgresLauncher {',
+            '  [StructLayout(LayoutKind.Sequential)] public struct StartupInfo { public int cb; public IntPtr reserved; public IntPtr desktop; public IntPtr title; public int x; public int y; public int xSize; public int ySize; public int xCountChars; public int yCountChars; public int fillAttribute; public int flags; public short showWindow; public short reserved2; public IntPtr reserved3; public IntPtr stdInput; public IntPtr stdOutput; public IntPtr stdError; }',
+            '  [StructLayout(LayoutKind.Sequential)] public struct ProcessInformation { public IntPtr process; public IntPtr thread; public int processId; public int threadId; }',
+            '  [DllImport("kernel32.dll", SetLastError=true, CharSet=CharSet.Unicode)] public static extern bool CreateProcessW(string applicationName, StringBuilder commandLine, IntPtr processAttributes, IntPtr threadAttributes, bool inheritHandles, uint creationFlags, IntPtr environment, string currentDirectory, ref StartupInfo startupInfo, out ProcessInformation processInformation);',
+            '  [DllImport("kernel32.dll", SetLastError=true)] public static extern bool CloseHandle(IntPtr handle);',
+            '}',
+            '\'@',
+            'Add-Type -TypeDefinition $source',
+            '$startupInfo = New-Object EmbeddedPostgresLauncher+StartupInfo',
+            '$startupInfo.cb = [Runtime.InteropServices.Marshal]::SizeOf([type][EmbeddedPostgresLauncher+StartupInfo])',
+            '$processInformation = New-Object EmbeddedPostgresLauncher+ProcessInformation',
+            '$commandLine = New-Object System.Text.StringBuilder',
+            '[void]$commandLine.Append($env:EMBEDDED_POSTGRES_COMMAND_LINE)',
+            '# CREATE_NO_WINDOW | CREATE_UNICODE_ENVIRONMENT',
+            '$started = [EmbeddedPostgresLauncher]::CreateProcessW([NullString]::Value, $commandLine, [IntPtr]::Zero, [IntPtr]::Zero, $false, 0x08000400, [IntPtr]::Zero, [NullString]::Value, [ref]$startupInfo, [ref]$processInformation)',
+            'if (-not $started) { Write-Output ("LAUNCH_ERR " + [Runtime.InteropServices.Marshal]::GetLastWin32Error()); exit 1 }',
+            '[void][EmbeddedPostgresLauncher]::CloseHandle($processInformation.process)',
+            '[void][EmbeddedPostgresLauncher]::CloseHandle($processInformation.thread)',
+            'Write-Output ("LAUNCH_PID " + $processInformation.processId)',
+        ].join('\n');
+
+        await new Promise<void>((resolve, reject) => {
+            const launcherProcess = spawn('powershell', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command', launcher], {
+                windowsHide: true,
+                env: {
+                    ...process.env,
+                    LC_MESSAGES: locale,
+                    EMBEDDED_POSTGRES_COMMAND_LINE: commandLine,
+                },
+            });
+            let stdout = '';
+
+            launcherProcess.stdout?.on('data', (chunk: Buffer) => {
+                stdout += chunk.toString('utf-8');
+            });
+            launcherProcess.stderr?.on('data', (chunk: Buffer) => {
+                this.options.onError(chunk.toString('utf-8'));
+            });
+            launcherProcess.once('error', reject);
+            launcherProcess.once('close', (code) => {
+                const pidMatch = stdout.match(/LAUNCH_PID (\d+)/);
+                if (code === 0 && pidMatch) {
+                    this.detachedPostmasterPid = Number(pidMatch[1]);
+                    this.process = undefined;
+                    resolve();
+                    return;
+                }
+
+                reject(new Error(`Postgres detached launch failed (${stdout.trim() || `powershell exit ${code}`})`));
+            });
+        });
+    }
+
+    private async waitUntilReady() {
+        const startedAt = Date.now();
+
+        while (Date.now() - startedAt < POSTGRES_READY_TIMEOUT_MS) {
+            if (this.process !== undefined && (this.process.exitCode !== null || this.process.signalCode !== null)) {
+                throw new Error(`Postgres process exited before becoming ready on port ${this.options.port}`);
+            }
+            if (platform() === 'win32' && this.detachedPostmasterPid !== undefined) {
+                try {
+                    process.kill(this.detachedPostmasterPid, 0);
+                } catch {
+                    throw new Error(`Postgres process exited before becoming ready on port ${this.options.port}`);
+                }
+            }
+
+            const client = new Client({
+                user: this.options.user,
+                password: this.options.password,
+                port: this.options.port,
+                host: 'localhost',
+                database: 'postgres',
+                connectionTimeoutMillis: 2000,
+            });
+            client.on('error', () => undefined);
+
+            try {
+                await client.connect();
+                await client.query('SELECT 1');
+                await client.end().catch(() => undefined);
+                return;
+            } catch {
+                await client.end().catch(() => undefined);
+                await new Promise<void>((resolve) => setTimeout(resolve, POSTGRES_READY_POLL_INTERVAL_MS));
+            }
+        }
+
+        throw new Error(`Postgres cluster on port ${this.options.port} did not become ready within ${POSTGRES_READY_TIMEOUT_MS}ms`);
+    }
+
+    private isStarted() {
+        return this.process !== undefined || this.detachedPostmasterPid !== undefined;
+    }
+
+    private async waitUntilWindowsProcessStops(pid: number) {
+        const startedAt = Date.now();
+
+        while (Date.now() - startedAt < 15_000) {
+            const taskListOutput = await execAsync(`tasklist /FI "PID eq ${pid}" /NH`).catch(() => '');
+            if (!new RegExp(`\\s${pid}\\s`).test(taskListOutput)) {
+                return;
+            }
+
+            await new Promise<void>((resolve) => setTimeout(resolve, 100));
+        }
+    }
+
     /**
      * Stop an already started cluster with the given configuration.
      * NOTE: If you have `persisent` set to false, this method WILL DELETE your
@@ -276,38 +466,45 @@ class EmbeddedPostgres {
      * this method.
      */
     async stop() {
+        const pid = this.detachedPostmasterPid ?? this.process?.pid;
+
         // GUARD: If no database is running, immdiately return the function.
-        if (!this.process) {
+        if (!this.isStarted()) {
             return;
         }
 
         // Kill the existing postgres process
-        await new Promise<void>((resolve) => {
-            // Register a handler for when the process finally exists
-            this.process?.on('exit', resolve);
+        if (platform() === 'win32') {
+            if (!pid) {
+                throw new Error('Could not find process PID');
+            }
 
-            // GUARD: Check if we're on Windows, since Windows doesn't support SIGINT
-            if (platform() === 'win32') {
-                // GUARD: Double check the pid is there to keep TypeScript happy
-                if (!this.process?.pid) {
-                    throw new Error('Could not find process PID');
-                }
+            await new Promise<void>((resolve) => {
+                const killer = spawn('taskkill', ['/pid', pid.toString(), '/f', '/t'], {
+                    windowsHide: true,
+                });
+                killer.on('error', () => resolve());
+                killer.on('close', () => resolve());
+            });
+            await this.waitUntilWindowsProcessStops(pid);
+        } else {
+            await new Promise<void>((resolve) => {
+                // Register a handler for when the process finally exists
+                this.process?.on('exit', resolve);
 
-                // Actually kill the process using the Windows taskkill command
-                spawn('taskkill', ['/pid', this.process.pid.toString(), '/f', '/t']);
-            } else {
                 // If on a sane OS, simply kill using SIGINT
                 this.process?.kill('SIGINT');
-            }
-        });
+            });
+        }
 
         // Clean up process
         this.process = undefined;
+        this.detachedPostmasterPid = undefined;
 
         // GUARD: Additional work if database is not persistent
         if (this.options.persistent === false) {
             // Delete the data directory
-            await fs.rm(this.options.databaseDir, { recursive: true, force: true });
+            await fs.rm(this.options.databaseDir, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
         }
     }
 
@@ -340,7 +537,7 @@ class EmbeddedPostgres {
      */
     async createDatabase(name: string) {
         // GUARD: Cluster must be running for performing database operations
-        if (!this.process) {
+        if (!this.isStarted()) {
             throw new Error('Your cluster must be running before you can create a database');
         }
         
@@ -358,7 +555,7 @@ class EmbeddedPostgres {
      */
     async dropDatabase(name: string) {
         // GUARD: Cluster must be running for performing database operations
-        if (!this.process) {
+        if (!this.isStarted()) {
             throw new Error('Your cluster must be running before you can create a database');
         }
 
