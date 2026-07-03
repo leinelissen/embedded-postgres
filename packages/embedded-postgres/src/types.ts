@@ -1,3 +1,5 @@
+export type PostgresLifecycleMode = 'managed' | 'detached';
+
 /**
  * The options that are optionally specified for launching the Postgres database.
  */
@@ -17,6 +19,12 @@ export interface PostgresOptions {
     /** Whether all data should be left in place when the database is shut down.
      * Defaults to `true`. */
     persistent: boolean;
+    /** Controls how the Postgres process is tied to the parent Node process.
+     * `managed` preserves the historical behavior: the child stays attached
+     * and is stopped automatically when the parent exits. `detached` isolates
+     * the postmaster from parent terminal signals and requires explicit
+     * `stop()` calls. Defaults to `managed`. */
+    lifecycleMode: PostgresLifecycleMode;
     /** Pass any additional flags to the initdb process. You can find all
      * available flags here:
      * https://www.postgresql.org/docs/current/app-initdb.html. Flags should be
