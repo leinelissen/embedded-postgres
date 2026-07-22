@@ -25,7 +25,6 @@
   "license": "MIT",
   "devDependencies": {
     "@embedded-postgres/symlink-reader": "^18.4.0-beta.17",
-    "@types/async-exit-hook": "^2.0.0",
     "@types/pg": "^8.6.5",
     "eslint": "^8.56.0",
     "typescript": "^4.7.3",
@@ -42,7 +41,7 @@
     "@embedded-postgres/windows-x64": "^18.4.0-beta.17"
   },
   "dependencies": {
-    "async-exit-hook": "^2.0.1",
+    "exit-hook": "^5.1.0",
     "pg": "^8.7.3"
   },
   "publishConfig": {
