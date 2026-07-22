@@ -1,6 +1,7 @@
 import { it, expect, afterEach } from 'vitest';
 import fs from 'fs/promises';
 import path from 'path';
+import { spawn } from 'child_process';
 import EmbeddedPostgres from '../src/index.js';
 import { PostgresOptions } from '../src/types.js';
 import { beforeEach } from 'node:test';
@@ -159,4 +160,26 @@ it('should ensure binary files have correct permissions', async () => {
     const afterFixStat = await fs.stat(postgres);
     // Permissions should still be correct
     expect((afterFixStat.mode & expectedPermissions)).toBe(expectedPermissions);
+});
+
+it('should preserve a custom process.exitCode when the process exits (gracefulShutdown does not force exit 0)', async () => {
+    const scriptPath = new URL('./helpers/exit-code-test.mjs', import.meta.url).pathname;
+
+    await new Promise<void>((resolve, reject) => {
+        const child = spawn(process.execPath, [scriptPath], {
+            stdio: ['ignore', 'pipe', 'pipe'],
+        });
+
+        child.on('exit', (code) => {
+            try {
+                expect(code).toBe(42);
+            } catch (e) {
+                reject(e);
+                return;
+            }
+            resolve();
+        });
+
+        child.on('error', reject);
+    });
 });

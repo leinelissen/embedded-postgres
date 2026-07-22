@@ -5,7 +5,7 @@ import { platform, tmpdir, userInfo } from 'os';
 import { ChildProcess, spawn, exec, execSync } from 'child_process';
 
 import pg from 'pg';
-import AsyncExitHook from 'async-exit-hook';
+import { asyncExitHook } from 'exit-hook';
 
 import getBinaries from './binary.js';
 import { PostgresOptions } from './types.js';
@@ -430,17 +430,16 @@ async function execAsync(command: string) {
  * nicely shutdown all potentially started clusters, and we don't end up with
  * zombie processes.
  */
-async function gracefulShutdown(done: () => void) {
+async function gracefulShutdown() {
     // Loop through all instances, stop them, and await the response
     await Promise.all([...instances].map((instance) => {
         return instance.stop();
     }));
-
-    // Let NodeJS know we're done
-    done();
 }
 
 // Register graceful shutdown function
-AsyncExitHook(gracefulShutdown);
+asyncExitHook(gracefulShutdown, {
+    wait: 5000
+});
 
 export default EmbeddedPostgres;
