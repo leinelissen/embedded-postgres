@@ -94,6 +94,8 @@ class EmbeddedPostgres {
 
     private process?: ChildProcess;
 
+    private startedWithPgCtl = false;
+
     private isRootUser: boolean;
 
     constructor(options: Partial<PostgresOptions> = {}) {
@@ -222,7 +224,7 @@ class EmbeddedPostgres {
      * shut down when the script exits.
      */
     async start() {
-        const { postgres } = await bin;
+        const { postgres, pg_ctl } = await bin;
         const locale = getBestLocale();
 
         // Optionally retrieve the uid and gid
@@ -230,6 +232,60 @@ class EmbeddedPostgres {
             .catch(() => { 
                 throw new Error('Postgres cannot run as a root user. embedded-postgres could not find a postgres user to run as instead. Consider using the `createPostgresUser` option.'); 
             });
+
+        // GUARD: On Windows, postgres.exe refuses to start whenever the calling
+        // token is a member of the Administrators group ("Execution of PostgreSQL
+        // by a user with administrative permissions is not permitted"). pg_ctl is
+        // the binary Postgres ships for exactly this case: it builds a restricted
+        // token (get_restricted_token) and starts the postmaster under it. initdb
+        // already does this internally, which is why cluster creation succeeds and
+        // only start() fails. Spawning postgres.exe directly therefore makes every
+        // elevated Windows shell unable to start a cluster at all.
+        // ponytail: win32-only branch. pg_ctl would work on all platforms and would
+        // let this method drop the stderr scraping entirely, but the direct-spawn
+        // path is what upstream CI exercises on macOS/Linux, so the change is scoped
+        // to the platform that is actually broken.
+        if (platform() === 'win32') {
+            await ensureBinIsExecutable(pg_ctl);
+            // Keep the log inside databaseDir so callers that delete the data
+            // directory also clean this up.
+            const logFile = path.join(this.options.databaseDir, 'embedded-postgres.log');
+            // NOTE: stdio is ignored on purpose. The postmaster that pg_ctl daemonises
+            // inherits any pipe we open, so a piped stdio would stay open for the
+            // lifetime of the server -- that keeps the Node event loop alive and makes
+            // 'close' never fire. `-w` already blocks until the server accepts
+            // connections, and `-l` captures the server output we would have scraped.
+            const exitCode = await new Promise<number>((resolve, reject) => {
+                const ctl = spawn(pg_ctl, [
+                    '-D',
+                    this.options.databaseDir,
+                    '-l',
+                    logFile,
+                    '-o',
+                    ['-p', this.options.port.toString(), ...this.options.postgresFlags].join(' '),
+                    '-w',
+                    'start',
+                ], {
+                    ...permissionIds,
+                    stdio: 'ignore',
+                    env: {
+                        ...process.env,
+                        LC_MESSAGES: locale,
+                    },
+                });
+                ctl.on('error', reject);
+                ctl.on('exit', (code) => resolve(code ?? 1));
+            });
+            const log = await fs.readFile(logFile, 'utf-8').catch(() => '');
+            if (log) {
+                this.options.onLog(log);
+            }
+            if (exitCode !== 0) {
+                throw new Error(`pg_ctl start exited with code ${exitCode}: ${log.trim()}`);
+            }
+            this.startedWithPgCtl = true;
+            return;
+        }
 
         // Make the file executable, in case it is not
         ensureBinIsExecutable(postgres);
@@ -276,6 +332,33 @@ class EmbeddedPostgres {
      * this method.
      */
     async stop() {
+        // GUARD: A cluster started through pg_ctl has no long-lived child handle --
+        // pg_ctl exits as soon as the postmaster is up, so `this.process` is unset and
+        // the taskkill path below would silently leak the running server. Shut it down
+        // through pg_ctl as well, which reads postmaster.pid from the data directory.
+        if (this.startedWithPgCtl) {
+            const { pg_ctl } = await bin;
+            await new Promise<void>((resolve, reject) => {
+                const ctl = spawn(pg_ctl, [
+                    '-D',
+                    this.options.databaseDir,
+                    '-m',
+                    'fast',
+                    '-w',
+                    'stop',
+                ], { stdio: 'ignore' });
+                ctl.on('error', reject);
+                ctl.on('exit', () => resolve());
+            });
+            this.startedWithPgCtl = false;
+            // GUARD: Additional work if database is not persistent
+            if (this.options.persistent === false) {
+                // Delete the data directory
+                await fs.rm(this.options.databaseDir, { recursive: true, force: true });
+            }
+            return;
+        }
+
         // GUARD: If no database is running, immdiately return the function.
         if (!this.process) {
             return;
@@ -340,7 +423,7 @@ class EmbeddedPostgres {
      */
     async createDatabase(name: string) {
         // GUARD: Cluster must be running for performing database operations
-        if (!this.process) {
+        if (!this.process && !this.startedWithPgCtl) {
             throw new Error('Your cluster must be running before you can create a database');
         }
         
@@ -358,7 +441,7 @@ class EmbeddedPostgres {
      */
     async dropDatabase(name: string) {
         // GUARD: Cluster must be running for performing database operations
-        if (!this.process) {
+        if (!this.process && !this.startedWithPgCtl) {
             throw new Error('Your cluster must be running before you can create a database');
         }
 
