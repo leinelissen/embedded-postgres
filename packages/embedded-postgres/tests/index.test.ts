@@ -1,10 +1,9 @@
-import { it, expect, afterEach } from 'vitest';
+import { it, expect, afterEach, beforeEach } from 'vitest';
 import fs from 'fs/promises';
 import path from 'path';
 import { spawn } from 'child_process';
 import EmbeddedPostgres from '../src/index.js';
 import { PostgresOptions } from '../src/types.js';
-import { beforeEach } from 'node:test';
 
 const DB_NAME = 'embedded-pg-test-db';
 const DB_PATH = path.join(__dirname, 'data', 'db');
@@ -131,10 +130,10 @@ it('should automatically remove files when persistent is set to false', async ()
     // Auto-delete the database by stopping the cluster
     await pg.stop();
 
-    // Check that the database files have been delete
-    expect(() => fs.stat(path.join(DB_PATH, 'pg_hba.conf')))
+    // Check that the database files have been deleted
+    await expect(fs.stat(path.join(DB_PATH, 'pg_hba.conf')))
         .rejects
-        .toThrowError();
+        .toThrow();
 });
 
 it('should ensure binary files have correct permissions', async () => {

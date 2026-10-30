@@ -1,5 +1,0 @@
-**/dist/**
-**/node_modules/**
-tsconfig.json
-.eslintrc.js
-**/scripts/**

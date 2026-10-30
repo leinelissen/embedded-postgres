@@ -146,7 +146,7 @@ class EmbeddedPostgres {
                 permissionIds = await this.getUidAndGid();
             } catch (err) {
                 this.options.onError(err);
-                throw new Error('Failed to create and initialize a new user on this system.');
+                throw new Error('Failed to create and initialize a new user on this system.', { cause: err });
             }
         }
 
@@ -387,7 +387,7 @@ class EmbeddedPostgres {
         } catch (err) {
             // GUARD: No user exists, but check that a postgres user should be created
             if (!this.options.createPostgresUser) {
-                throw new Error('You are running this script as root. Postgres does not support running as root. If you wish to continue, configure embedded-postgres to create a Postgres user by setting the `createPostgresUser` option to true.');
+                throw new Error('You are running this script as root. Postgres does not support running as root. If you wish to continue, configure embedded-postgres to create a Postgres user by setting the `createPostgresUser` option to true.', { cause: err });
             }
         }
     }

@@ -4,21 +4,12 @@
         "target": "es2015",
         "incremental": true,
         "outDir": "./dist",
-        "baseUrl": ".",
+        "types": ["node"],
         "module": "Node16",
         "moduleResolution": "Node16",
         "resolveJsonModule": true,
         "esModuleInterop": true,
-        "strict": true,
-        "paths": {
-            "@embedded-postgres/*": [
-                "packages/*/src/index.ts",
-            ],
-            "embedded-postgres": [
-                "packages/embedded-postgres/src/index.ts",
-            ]
-        }
-
+        "strict": true
     },
     "references": [
         {

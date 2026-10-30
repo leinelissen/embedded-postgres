@@ -1,7 +1,17 @@
-import { execSync } from "child_process";
-import lernaRun from "@lerna/run";
-import lernaVersion from "@lerna/version";
-import lernaPublish from "@lerna/publish";
+import { execFileSync, execSync } from "child_process";
+import { fileURLToPath } from "url";
+
+const lernaCli = fileURLToPath(import.meta.resolve("lerna/cli"));
+
+/**
+ * Run a lerna CLI command using the locally installed version of lerna.
+ */
+function runLerna(args) {
+  execFileSync(process.execPath, [lernaCli, ...args], {
+    cwd: process.cwd(),
+    stdio: "inherit",
+  });
+}
 
 /**
  * Define a static set of versions that are supported. This means that only new
@@ -84,32 +94,16 @@ async function main() {
     console.log(`🔄 Processing v${version}...`);
 
     // Compile the scripts in all repositories
-    await lernaRun({
-      cwd: process.cwd(),
-      script: "build",
-    });
+    runLerna(["run", "build"]);
 
     // Download the new versions in all repositories
-    await lernaRun({
-      cwd: process.cwd(),
-      script: "download",
-      "--": [pgVersion, "--", "--all"],
-    });
+    runLerna(["run", "download", "--parallel", "--", pgVersion, "--all"]);
 
     // Release the newly downloaded releases
-    await lernaVersion({
-      cwd: process.cwd(),
-      bump: version,
-      yes: true,
-      forcePublish: true,
-    });
+    // runLerna(["version", version, "--yes", "--force-publish"]);
 
     // Publish the packages
-    await lernaPublish({
-      cwd: process.cwd(),
-      bump: "from-package",
-      yes: true,
-    });
+    // runLerna(["publish", "from-package", "--yes"]);
 
     // Log success
     console.log(`✅ Processing v${version} complete.`);

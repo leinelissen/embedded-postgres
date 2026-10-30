@@ -11,8 +11,8 @@
   "scripts": {
     "start": "tsc -w",
     "build": "tsc",
-    "lint": "eslint ./src --ext ts",
-    "docs": "typedoc --plugin typedoc-plugin-markdown ./src/types.ts --theme markdown --excludePrivate",
+    "lint": "eslint ./src",
+    "docs": "typedoc --plugin typedoc-plugin-markdown ./src/types.ts",
     "test": "vitest"
   },
   "keywords": [
@@ -25,10 +25,11 @@
   "license": "MIT",
   "devDependencies": {
     "@embedded-postgres/symlink-reader": "^18.4.0-beta.17",
-    "@types/pg": "^8.6.5",
-    "eslint": "^8.56.0",
-    "typescript": "^4.7.3",
-    "vitest": "^1.1.0"
+    "@types/pg": "^8.23.1",
+    "eslint": "^10.14.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5"
   },
   "optionalDependencies": {
     "@embedded-postgres/darwin-arm64": "^18.4.0-beta.17",
@@ -42,7 +43,7 @@
   },
   "dependencies": {
     "exit-hook": "^5.1.0",
-    "pg": "^8.7.3"
+    "pg": "^8.23.1"
   },
   "publishConfig": {
     "access": "public"

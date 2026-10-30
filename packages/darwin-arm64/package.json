@@ -7,7 +7,7 @@
   "scripts": {
     "start": "tsc -w",
     "build": "tsc",
-    "lint": "eslint ./src --ext ts",
+    "lint": "eslint ./src",
     "download": "node scripts/download.js",
     "postinstall": "node scripts/hydrate-symlinks.js"
   },

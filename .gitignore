@@ -54,6 +54,10 @@ web_modules/
 # Optional eslint cache
 .eslintcache
 
+# Nx and Vitest caches
+.nx/
+.vitest/
+
 # Optional stylelint cache
 .stylelintcache
 
