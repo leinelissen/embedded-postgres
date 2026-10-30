@@ -2,6 +2,7 @@ import { it, expect, afterEach, beforeEach } from 'vitest';
 import fs from 'fs/promises';
 import path from 'path';
 import { spawn } from 'child_process';
+import { pathToFileURL } from 'url';
 import EmbeddedPostgres from '../src/index.js';
 import { PostgresOptions } from '../src/types.js';
 
@@ -29,6 +30,38 @@ afterEach(async () => {
     // Remove all cluster files
     await fs.rm(path.join(DB_PATH), { recursive: true, force: true });
 });
+
+/**
+ * Load the real platform package so the tests exercise the same hydrator and
+ * manifest that embedded-postgres uses at runtime.
+ */
+async function getPlatformPackage() {
+    const { postgres } = await import('../src/binary.js').then((module) => module.default());
+    const packageRoot = path.resolve(path.dirname(postgres), '..', '..');
+    const hydrateScript = path.join(packageRoot, 'scripts', 'hydrate-symlinks.js');
+    const { hydrateSymlinks, symlinkFile } = await import(pathToFileURL(hydrateScript).href);
+
+    return { hydrateSymlinks, symlinkFile };
+}
+
+/**
+ * Delete one real symlink from the platform package. The caller must restore it
+ * with hydrateSymlinks() when the test is done.
+ */
+async function removeFirstSymlink(symlinkFile: string) {
+    const symlinks = JSON.parse(await fs.readFile(symlinkFile, 'utf-8')) as { target: string }[];
+    const packageRoot = path.resolve(path.dirname(symlinkFile), '..');
+    const target = symlinks[0]?.target;
+
+    if (!target) {
+        throw new Error('No symlinks found in the platform package manifest');
+    }
+
+    const targetPath = path.resolve(packageRoot, target);
+    await fs.rm(targetPath, { force: true });
+
+    return { target, targetPath };
+}
 
 it('should be able to initialise a cluster', async () => {
     // Initialise and stop a basic cluster
@@ -181,4 +214,50 @@ it('should preserve a custom process.exitCode when the process exits (gracefulSh
 
         child.on('error', reject);
     });
+});
+
+// Windows packages have an empty symlink manifest, so there is nothing to remove.
+it.skipIf(process.platform === 'win32')('should throw when symlinks are missing and autoRehydrateSymlinks is false', async () => {
+    const { hydrateSymlinks, symlinkFile } = await getPlatformPackage();
+    const { target, targetPath } = await removeFirstSymlink(symlinkFile);
+
+    try {
+        pg = new EmbeddedPostgres({
+            ...DEFAULT_SETTINGS,
+            autoRehydrateSymlinks: false,
+        });
+
+        // Without auto-rehydration, initialise() should fail before spawning Postgres.
+        await expect(pg.initialise())
+            .rejects
+            .toThrow(`Missing symlink "${target}"`);
+
+        // The symlink should still be missing.
+        await expect(fs.access(targetPath)).rejects.toThrow();
+    } finally {
+        // Always restore the symlink, even when the assertion fails.
+        await hydrateSymlinks();
+    }
+});
+
+// Windows packages have an empty symlink manifest, so there is nothing to remove.
+it.skipIf(process.platform === 'win32')('should recreate missing symlinks when autoRehydrateSymlinks is true', async () => {
+    const { hydrateSymlinks, symlinkFile } = await getPlatformPackage();
+    const { targetPath } = await removeFirstSymlink(symlinkFile);
+
+    try {
+        pg = new EmbeddedPostgres({
+            ...DEFAULT_SETTINGS,
+            autoRehydrateSymlinks: true,
+        });
+
+        // With auto-rehydration enabled, initialise() should recreate the symlink and continue.
+        await pg.initialise();
+
+        // The symlink should be back.
+        await expect(fs.access(targetPath)).resolves.toBeUndefined();
+    } finally {
+        // Always restore the symlink, even when the assertion fails.
+        await hydrateSymlinks();
+    }
 });

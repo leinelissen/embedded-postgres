@@ -8,6 +8,7 @@ import pg from 'pg';
 import { asyncExitHook } from 'exit-hook';
 
 import getBinaries from './binary.js';
+import { ensureSymlinks } from './symlinks.js';
 import { PostgresOptions } from './types.js';
 
 const bin = getBinaries();
@@ -60,6 +61,7 @@ const defaults: PostgresOptions = {
     initdbFlags: [],
     postgresFlags: [],
     createPostgresUser: false,
+    autoRehydrateSymlinks: false,
     onLog: console.log,
     onError: console.error,
 };
@@ -123,6 +125,7 @@ class EmbeddedPostgres {
      */
     async initialise() {
         const { postgres, initdb } = await bin;
+        await ensureSymlinks(postgres, this.options.autoRehydrateSymlinks);
         const locale = getBestLocale();
 
         // GUARD: Check that a postgres user is available 
@@ -223,6 +226,7 @@ class EmbeddedPostgres {
      */
     async start() {
         const { postgres } = await bin;
+        await ensureSymlinks(postgres, this.options.autoRehydrateSymlinks);
         const locale = getBestLocale();
 
         // Optionally retrieve the uid and gid
