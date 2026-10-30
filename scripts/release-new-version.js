@@ -14,6 +14,29 @@ function runLerna(args) {
 }
 
 /**
+ * Publish the packages, retrying on failure. `lerna publish from-package` only
+ * publishes versions that are missing from the registry, so retrying after a
+ * partial failure is safe.
+ */
+function publishWithRetry(attempts = 3) {
+  for (let attempt = 1; attempt <= attempts; attempt++) {
+    try {
+      // Uploads are serialized because the platform packages contain large
+      // native binaries. Publishing them in parallel (lerna's default is one
+      // upload per CPU core) makes the npm registry drop connections while the
+      // request body is still being written, which might surface as `write EPIPE`.
+      runLerna(["publish", "from-package", "--yes", "--concurrency", "1"]);
+      return;
+    } catch (error) {
+      if (attempt === attempts) {
+        throw error;
+      }
+      console.warn(`⚠️  Publish attempt ${attempt} failed, retrying (${attempt + 1}/${attempts})...`);
+    }
+  }
+}
+
+/**
  * Define a static set of versions that are supported. This means that only new
  * binaries for these versions will be released.
  */
@@ -103,7 +126,7 @@ async function main() {
     runLerna(["version", version, "--yes", "--force-publish"]);
 
     // Publish the packages
-    runLerna(["publish", "from-package", "--yes"]);
+    publishWithRetry();
 
     // Log success
     console.log(`✅ Processing v${version} complete.`);
