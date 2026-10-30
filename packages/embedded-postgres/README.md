@@ -1,5 +1,4 @@
-![Embedded
-Postgres](https://github.com/leinelissen/embedded-postgres/raw/main/docs/images/embedded-postgres-header.svg)
+![Embedded Postgres](./docs/images/embedded-postgres-header.svg)
 
 <div align="center">
 
@@ -85,16 +84,16 @@ Additionally, we track the binaries that are created upstream in [zonky's
 embedded-postgres-binaries](https://github.com/zonkyio/embedded-postgres). This
 leads to the following current support matrix:
 
-| Platform / Architecture   | 12.20.0 | 13.16.0 | 14.13.0 | 15.8.0 | 16.4.0 | 17.0.0 |
-|---------------------------|---------|---------|---------|--------|--------|--------|
-| 🍎 Darwin / x64           | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| 🍎 Darwin / arm64[[1]](https://github.com/zonkyio/embedded-postgres/issues/86#issuecomment-1120425822) | 🚫 | 🚫 | 🚫 | ✅ | ✅ | ✅ |
-| 🪟 Windows / x64          | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| 🐧 Linux / x64            | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| 🐧 Linux / arm            | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| 🐧 Linux / arm64          | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| 🐧 Linux / ia32           | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| 🐧 Linux / ppc64          | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Platform / Architecture   | 14.24.0 | 15.19.0 | 16.15.0 | 17.11.0 | 18.6.0 |
+|---------------------------|---------|---------|---------|---------|--------|
+| 🍎 Darwin / x64           | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 🍎 Darwin / arm64[[1]](https://github.com/zonkyio/embedded-postgres/issues/86#issuecomment-1120425822) | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 🪟 Windows / x64          | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 🐧 Linux / x64            | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 🐧 Linux / arm            | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 🐧 Linux / arm64          | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 🐧 Linux / ia32           | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 🐧 Linux / ppc64          | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 In order to install a particular version, look for the latest tag in
 [NPM](https://www.npmjs.com/package/embedded-postgres). For example, if you
@@ -192,13 +191,19 @@ system for usage by your script.
 
 ## Credits and Licensing
 Embedded Postgres was created by Lei Nelissen for [BMD
-Studio](https://bmd.studio). It is based on [zonky's
-embedded-postgres-binaries](https://github.com/zonkyio/embedded-postgres). The
-binaries are made available under the Apache License 2.0, whereas the specific
+Studio](https://bmd.studio). It is currently maintained by [Studio Falkland](https://falkland.studio). The package is based on [zonky's
+embedded-postgres-binaries](https://github.com/zonkyio/embedded-postgres). 
+
+The binaries are made available under the Apache License 2.0, whereas the specific
 code in this package is made available under the MIT license.
 
+<p float="left">
 <a href="https://bmd.studio">
-    <img src="https://github.com/leinelissen/embedded-postgres/raw/main/docs/images/logo-bmd.svg" alt="BMD Studio" width="150" height="150" />
+    <img src="./docs/images/logo-bmd.svg" alt="BMD Studio" height="60" />
 </a>
+<a href="https://falkland.studio">
+    <img src="./docs/images/logo-falkland.svg" alt="Studio Falkland" height="60" />
+</a>
+</p>
 
 <br />

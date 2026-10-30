@@ -78,6 +78,29 @@ function checkNpmAuth() {
 }
 
 /**
+ * Verify that the package README matches the root README. NPM renders the
+ * package README on the package page, so the two must not drift apart.
+ * Exits the process if they differ.
+ */
+function checkReadmesMatch() {
+  try {
+    execFileSync(
+      "git",
+      ["diff", "--no-index", "--", "README.md", "packages/embedded-postgres/README.md"],
+      { stdio: "pipe" },
+    );
+  } catch (error) {
+    if (error.status === 1) {
+      console.error("❌ The root README and packages/embedded-postgres/README.md have diverged:");
+      console.error(error.stdout.toString());
+      process.exit(1);
+    }
+    throw error;
+  }
+  console.log("✅ READMEs are in sync.");
+}
+
+/**
  * Verify that the working tree has no uncommitted changes. Exits the process if dirty.
  */
 function checkCleanWorkingTree() {
@@ -98,6 +121,7 @@ async function main() {
   console.log("🔍 Running pre-flight checks...");
   checkNpmAuth();
   checkCleanWorkingTree();
+  checkReadmesMatch();
   console.log("✅ All pre-flight checks passed.\n");
 
   // Determine which versions to release
