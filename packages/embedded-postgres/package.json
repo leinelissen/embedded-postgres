@@ -50,6 +50,7 @@
   },
   "files": [
     "/dist/**/*",
+    "/docs/images/**/*",
     "README.md"
   ],
   "engines": {
