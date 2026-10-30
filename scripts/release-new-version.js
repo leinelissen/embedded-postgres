@@ -17,7 +17,7 @@ function runLerna(args) {
  * Define a static set of versions that are supported. This means that only new
  * binaries for these versions will be released.
  */
-const supportedVersions = ["14.23.0", "15.18.0", "16.14.0", "17.10.0", "18.4.0"];
+const supportedVersions = ["14.24.0", "15.19.0", "16.15.0", "17.11.0", "18.6.0"];
 
 /**
  * Accept a particular affix that should be appended to the version number. The

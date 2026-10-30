@@ -80,8 +80,8 @@ Additionally, we track the binaries that are created upstream in [zonky's
 embedded-postgres-binaries](https://github.com/zonkyio/embedded-postgres). This
 leads to the following current support matrix:
 
-| Platform / Architecture   | 14.23.0 | 15.18.0 | 16.14.0 | 17.10.0 | 18.4.0 |
-|---------------------------|---------|---------|---------|--------|--------|
+| Platform / Architecture   | 14.24.0 | 15.19.0 | 16.15.0 | 17.11.0 | 18.6.0 |
+|---------------------------|---------|---------|---------|---------|--------|
 | 🍎 Darwin / x64           | ✅ | ✅ | ✅ | ✅ | ✅ |
 | 🍎 Darwin / arm64[[1]](https://github.com/zonkyio/embedded-postgres/issues/86#issuecomment-1120425822) | ✅ | ✅ | ✅ | ✅ | ✅ |
 | 🪟 Windows / x64          | ✅ | ✅ | ✅ | ✅ | ✅ |
