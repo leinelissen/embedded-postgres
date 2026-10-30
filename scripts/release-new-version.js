@@ -100,10 +100,10 @@ async function main() {
     runLerna(["run", "download", "--parallel", "--", pgVersion, "--all"]);
 
     // Release the newly downloaded releases
-    // runLerna(["version", version, "--yes", "--force-publish"]);
+    runLerna(["version", version, "--yes", "--force-publish"]);
 
     // Publish the packages
-    // runLerna(["publish", "from-package", "--yes"]);
+    runLerna(["publish", "from-package", "--yes"]);
 
     // Log success
     console.log(`✅ Processing v${version} complete.`);
