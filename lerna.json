@@ -3,7 +3,7 @@
   "packages": [
     "packages/*"
   ],
-  "version": "14.24.0-beta.18",
+  "version": "14.24.0-beta.19",
   "command": {
     "version": {
       "npmClientArgs": [
