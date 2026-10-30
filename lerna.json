@@ -3,5 +3,12 @@
   "packages": [
     "packages/*"
   ],
-  "version": "18.4.0-beta.17"
+  "version": "18.4.0-beta.17",
+  "command": {
+    "version": {
+      "npmClientArgs": [
+        "--force"
+      ]
+    }
+  }
 }
