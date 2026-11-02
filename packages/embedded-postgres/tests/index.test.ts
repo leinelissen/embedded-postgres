@@ -46,7 +46,9 @@ async function getPlatformPackage() {
 
 /**
  * Delete one real symlink from the platform package. The caller must restore it
- * with hydrateSymlinks() when the test is done.
+ * with hydrateSymlinks() when the test is done. Returns undefined when the
+ * platform package has no symlinks (e.g. the Windows and macOS binaries ship
+ * regular copies of their libraries instead of symlinks).
  */
 async function removeFirstSymlink(symlinkFile: string) {
     const symlinks = JSON.parse(await fs.readFile(symlinkFile, 'utf-8')) as { target: string }[];
@@ -54,7 +56,7 @@ async function removeFirstSymlink(symlinkFile: string) {
     const target = symlinks[0]?.target;
 
     if (!target) {
-        throw new Error('No symlinks found in the platform package manifest');
+        return undefined;
     }
 
     const targetPath = path.resolve(packageRoot, target);
@@ -216,10 +218,15 @@ it('should preserve a custom process.exitCode when the process exits (gracefulSh
     });
 });
 
-// Windows packages have an empty symlink manifest, so there is nothing to remove.
-it.skipIf(process.platform === 'win32')('should throw when symlinks are missing and autoRehydrateSymlinks is false', async () => {
+it('should throw when symlinks are missing and autoRehydrateSymlinks is false', async (context) => {
     const { hydrateSymlinks, symlinkFile } = await getPlatformPackage();
-    const { target, targetPath } = await removeFirstSymlink(symlinkFile);
+    const symlink = await removeFirstSymlink(symlinkFile);
+
+    if (!symlink) {
+        return context.skip('Platform package has no symlinks to remove');
+    }
+
+    const { target, targetPath } = symlink;
 
     try {
         pg = new EmbeddedPostgres({
@@ -240,10 +247,15 @@ it.skipIf(process.platform === 'win32')('should throw when symlinks are missing 
     }
 });
 
-// Windows packages have an empty symlink manifest, so there is nothing to remove.
-it.skipIf(process.platform === 'win32')('should recreate missing symlinks when autoRehydrateSymlinks is true', async () => {
+it('should recreate missing symlinks when autoRehydrateSymlinks is true', async (context) => {
     const { hydrateSymlinks, symlinkFile } = await getPlatformPackage();
-    const { targetPath } = await removeFirstSymlink(symlinkFile);
+    const symlink = await removeFirstSymlink(symlinkFile);
+
+    if (!symlink) {
+        return context.skip('Platform package has no symlinks to remove');
+    }
+
+    const { targetPath } = symlink;
 
     try {
         pg = new EmbeddedPostgres({
