@@ -12,7 +12,7 @@
     "start": "tsc -w",
     "build": "tsc",
     "lint": "eslint ./src",
-    "docs": "typedoc --plugin typedoc-plugin-markdown ./src/types.ts",
+    "docs": "typedoc --plugin typedoc-plugin-markdown --cleanOutputDir false ./src/types.ts",
     "test": "vitest"
   },
   "keywords": [
