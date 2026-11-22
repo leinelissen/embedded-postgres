@@ -38,3 +38,20 @@ jobs:
         run: |
           cd packages/embedded-postgres
           npm test
+
+  test-postgres-19:
+    name: Test PostgreSQL 19
+    runs-on: ubuntu-latest
+    env:
+      TEST_POSTGRES_VERSION: '19.0.0'
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24.x
+      - run: npm ci --force
+      - run: npm run build
+      - run: npm run download -- -- "$TEST_POSTGRES_VERSION"
+      - run: npm test -- --run
+        working-directory: packages/embedded-postgres

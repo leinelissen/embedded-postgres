@@ -104,9 +104,19 @@ it('should allow the creation of pg clients', async () => {
     const client = pg.getPgClient();
     await client.connect();
 
-    // Check if it can query the database
-    const result = await client.query('SELECT datname FROM pg_database;');
-    expect(result.rows.map((r) => r.datname)).toContain('postgres');
+    try {
+        const result = await client.query('SELECT datname FROM pg_database;');
+        expect(result.rows.map((r) => r.datname)).toContain('postgres');
+
+        const expectedVersion = process.env.TEST_POSTGRES_VERSION;
+        if (expectedVersion) {
+            const [major, minor] = expectedVersion.split('.').map(Number);
+            const version = await client.query('SHOW server_version_num;');
+            expect(Number(version.rows[0].server_version_num)).toBe(major * 10000 + minor);
+        }
+    } finally {
+        await client.end();
+    }
 });
 
 it('should allow creating databases', async () => {
