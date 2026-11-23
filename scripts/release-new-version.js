@@ -40,7 +40,7 @@ function publishWithRetry(attempts = 3) {
  * Define a static set of versions that are supported. This means that only new
  * binaries for these versions will be released.
  */
-const supportedVersions = ["14.25.0", "15.20.0", "16.16.0", "17.12.0", "18.7.0"];
+const supportedVersions = ["14.25.0", "15.20.0", "16.16.0", "17.12.0", "18.7.0", "19.0.0"];
 
 /**
  * Accept a particular affix that should be appended to the version number. The
